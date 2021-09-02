@@ -1,7 +1,7 @@
 <template>
   <div class="fillcontain login_page">
     <transition name="form-fade" mode="in-out">
-      <section class="form_contianer" v-show="showLogin">
+      <section class="form_contianer">
         <div class="manage_tip">
           <p>WINE后台管理系统</p>
         </div>
@@ -23,11 +23,13 @@
 
 <script>
 
+import {login} from '../utils/api'
 
 export default {
   name: "Login",
   data(){
     return {
+
       loginForm: {
         username: '',
         password: ''
@@ -40,36 +42,32 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' }
         ],
       },
-      showLogin: false,
     }
   },
   mounted(){
-    this.showLogin = true;
-    // if (!this.adminInfo.id) {
-    //   this.getAdminData()
-    // }
+
   },
   methods: {
+
     async submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          const { data: res } = await this.$http.post('login', this.loginForm)
-          console.log(res.meta)
-          if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
-          this.$message.success('登录成功')
-          // const res = await login({user_name: this.loginForm.username, password: this.loginForm.password})
-          // if (res.status == 1) {
-          //   this.$message({
-          //     type: 'success',
-          //     message: '登录成功'
-          //   });
-          //   this.$router.push('man age')
-          // }else{
-          //   this.$message({
-          //     type: 'error',
-          //     message: res.message
-          //   });
-          // }
+          const res = await login({username: this.loginForm.username, password: this.loginForm.password})
+          console.log(res)
+          if (res.data.sessionid != null) {
+            this.$message({
+              type: "success",
+              message: "登陆成功"
+            });
+            this.$cookies.set("sessionid", res.data.sessionid)
+            this.$router.push("manage")
+          } else {
+            this.$message({
+              type: "error",
+              message: "登陆失败，请检查账号密码。"
+            });
+          }
+
         } else {
           this.$notify.error({
             title: '错误',
