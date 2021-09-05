@@ -12,8 +12,8 @@
           </el-submenu>
           <el-submenu index="3">
             <template slot="title"><i class="el-icon-s-shop"></i>店铺管理</template>
-            <el-menu-item index="addShop">添加商铺</el-menu-item>
-            <el-menu-item index="shopList">添加商铺</el-menu-item>
+            <el-menu-item index="addShop">添加店铺</el-menu-item>
+            <el-menu-item index="shopList">店铺列表</el-menu-item>
           </el-submenu>
           <el-submenu index="4">
             <template slot="title"><i class="el-icon-star-on"></i>图表</template>

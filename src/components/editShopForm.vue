@@ -1,8 +1,5 @@
 <template>
   <div>
-    <head-top></head-top>
-    <el-row style="margin-top: 20px;">
-      <el-col :span="14" :offset="4">
         <el-form ref="form" :model="form" :rules='rules' label-width="120px">
           <el-form-item label="店铺名" prop="name">
             <el-input v-model="form.name"></el-input>
@@ -48,81 +45,35 @@
             <el-button type="primary" @click="onSubmit">提交</el-button>
           </el-form-item>
         </el-form>
-      </el-col>
-    </el-row>
-    <el-dialog style="height: 120%" title="选择地点" :visible.sync="dialogFormVisible">
+    <el-dialog style="height: 120%" title="选择地点" :visible.sync="dialogFormVisible" append-to-body>
       <get-map :get-map-data="this.getMapData"></get-map>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import headTop from "../components/headTop";
-import getMap from "../components/getMap";
+import getMap from "./getMap";
+
+
 export default {
-  name: "addShop",
-  created() {
-    this.form.mapData= []
-  },
+  name: "editShopForm",
   data() {
     return {
-
-      
-      dialogFormVisible: false,
-      form: {
-        mapData: [],
-        name:'',
-        freight: [],
-        max_range:15,
-        tableData: [{
-          km: 1,
-          cny:3
-        }],
-      }
+      dialogFormVisible:false,
     }
   },
+  props: ['form'],
   components: {
-    headTop,
     getMap,
   },
   methods: {
-    getMapData(mapData) {
-      // console.log("getMapdatas!!!!")
-      this.form.mapData = mapData
-      this.dialogFormVisible = false
-    },
-    openMap() {
-      this.dialogFormVisible = true;
-    },
-    addFreight() {
-
-      function compare(p){ //这是比较函数
-        return function(m,n){
-          const a = m[p];
-          const b = n[p];
-          return a - b; //升序
-        }
-      }
-      this.form.tableData.sort(compare("km"))
-      if (this.form.tableData[[this.form.tableData.length - 1]].km === this.form.max_range) {
-        this.$message({
-          message:  "添加失败，请修改最大配送范围后再次尝试！",
-          type: "error"
-        }
-       )
-        return
-      }
-      this.form.tableData.push({
-        km: this.form.tableData[this.form.tableData.length -1].km + 1,
-        cny: this.form.tableData[this.form.tableData.length -1].cny + 2
-      });
-    },
-    deleteAllFreight() {
-      this.form.tableData = [{
-        km: 1,
-        cny:3
-      }]
-    },
+    openMap(){
+      this.dialogFormVisible = true
+    }
+  },
+  getMapData(mapData) {
+    this.form.mapData = mapData
+    this.dialogFormVisible = false
   }
 }
 </script>

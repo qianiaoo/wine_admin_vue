@@ -1,20 +1,118 @@
 <template>
   <div>
-    <map-picker></map-picker>
-    <!--    <map-drag></map-drag>-->
+    <head-top></head-top>
+    <el-table
+        :data="tableData"
+        style="width: 100%">
+      <el-table-column
+          label="店铺名"
+          prop="name">
+      </el-table-column>
+      <el-table-column
+          label="最大配送范围"
+          prop="max_range">
+      </el-table-column>
+      <el-table-column
+          label="配送规则">
+        <template slot-scope="scope">
+          <el-popover trigger="hover" placement="left">
+            <el-table :data="scope.row.freight">
+<!--              <span></span>-->
+              <el-table-column label="公里数" prop="km"></el-table-column>
+              <el-table-column label="配送费" prop="cny"></el-table-column>
+            </el-table>
+            <div slot="reference" class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.freight.length }}</el-tag>
+            </div>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column label="地址" >
+        <template v-slot="scope">
+        <el-popover trigger="hover" placement="left">
+          <p>{{"坐标："+scope.row.mapData[0]}}</p>
+          <div slot="reference" class="name-wrapper">
+            <el-tag size="medium">{{ scope.row.mapData[1] }}</el-tag>
+          </div>
+        </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" >
+        <template slot-scope="scope">
+          <el-button
+              size="mini"
+              @click="handleEdit(scope.$index, scope.row)">编辑
+          </el-button>
+          <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)">删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
+      <edit-shop-form :form="selectedRow"> </edit-shop-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-// import mapPicker from "../components/mapPicker";
-// import mapDrag from "../components/mapDrag";
-import mapPicker from "../components/mapPicker";
+
+import headTop from "../components/headTop";
+import editShopForm from "../components/editShopForm";
 
 export default {
   name: "shopList",
+  data() {
+    return {
+      dialogFormVisible:false,
+      selectedRow:{},
+      tableData: [{
+        name: '十八里河店',
+        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
+        freight: [
+          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
+        ],
+        max_range: 15
+      }, {
+        name: '二七区分店',
+        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
+        freight: [
+          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
+        ],
+        max_range: 20
+      }, {
+        name: '广岛分店',
+        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
+        freight: [
+          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
+        ],
+        max_range: 33
+      }, {
+        name: '大阪店',
+        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
+        freight: [
+          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
+        ],
+        max_range: 55
+      }]
+    }
+  },
   components: {
-    mapPicker,
-    // mapDrag
+    editShopForm,
+    headTop,
+  },
+
+  methods: {
+    handleEdit(index, row) {
+      this.selectedRow = row
+      this.dialogFormVisible = true
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    }
   }
 }
 </script>
