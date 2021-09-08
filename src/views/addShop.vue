@@ -8,7 +8,10 @@
             <el-input v-model="form.name"></el-input>
           </el-form-item>
           <el-form-item label="最大配送范围">
-            <el-input-number v-model="form.max_range"></el-input-number>
+            <el-input-number v-model="form.max_range" :precision="1"></el-input-number>
+          </el-form-item>
+          <el-form-item label="起送费">
+            <el-input-number v-model="form.min_fee" :precision="0" min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="配送费规则" prop="freight">
             <el-button type="primary" icon="el-icon-plus" circle @click="addFreight"></el-button>
@@ -23,7 +26,7 @@
                   sortable
                   label="公里数">
                 <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.km" size="mini" :precision="1" :step="0.5" :max="form.max_range"></el-input-number>
+                  <el-input-number v-model="scope.row.km" min="0" size="mini" :precision="1" :step="0.5" :max="form.max_range"></el-input-number>
                 </template>
               </el-table-column>
               <el-table-column
@@ -31,7 +34,7 @@
                   sortable
                   label="金额">
                 <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.cny" size="mini" :precision="1" :step="0.5" ></el-input-number>
+                  <el-input-number v-model="scope.row.cny" min="0" size="mini" :precision="1" :step="0.5" ></el-input-number>
                 </template>
               </el-table-column>
             </el-table>
@@ -51,7 +54,8 @@
       </el-col>
     </el-row>
     <el-dialog style="height: 120%" title="选择地点" :visible.sync="dialogFormVisible">
-      <get-map :get-map-data="this.getMapData"></get-map>
+      <get-map :parentFunc="this.getMapData"></get-map>
+<!--      <get-map @backMapData="getMapData"></get-map>-->
     </el-dialog>
   </div>
 </template>
@@ -74,6 +78,7 @@ export default {
         name:'',
         freight: [],
         max_range:15,
+        min_fee:0,
         tableData: [{
           km: 1,
           cny:3

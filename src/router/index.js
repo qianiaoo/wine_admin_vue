@@ -7,6 +7,7 @@ import addGoods from "../views/addGoods";
 import goodList from "../views/goodList";
 import addShop from "../views/addShop";
 import shopList from "../views/shopList";
+import orderList from "../views/orderList";
 // const home = r => require.ensure([], () => r(require('../page/Home')), 'home');
 Vue.use(VueRouter)
 
@@ -43,6 +44,11 @@ const routes = [
                 path: '/shopList',
                 component: shopList,
                 meta: ['店铺管理', '店铺列表']
+            },
+            {
+                path: '/orderList',
+                component: orderList,
+                meta: ['订单管理', '订单列表']
             }
         ]
     }

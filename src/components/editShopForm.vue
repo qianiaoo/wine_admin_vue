@@ -7,11 +7,14 @@
           <el-form-item label="最大配送范围">
             <el-input-number v-model="form.max_range"></el-input-number>
           </el-form-item>
+<!--          <el-form-item label="测试">-->
+<!--            <p>{{form.freight}}</p>-->
+<!--          </el-form-item>-->
           <el-form-item label="配送费规则" prop="freight">
             <el-button type="primary" icon="el-icon-plus" circle @click="addFreight"></el-button>
             <el-button type="danger" icon="el-icon-delete" circle @click="deleteAllFreight"></el-button>
 
-            <el-table :data="form.tableData" width="100%" :default-sort = "{prop: 'km', order: 'ascending'}">
+            <el-table :data="form.freight" width="100%" :default-sort = "{prop: 'km', order: 'ascending'}">
               <el-table-column
                   type="index">
               </el-table-column>
@@ -39,14 +42,17 @@
               <p>坐标: {{form.mapData[0]}}</p>
               <p>地址: {{form.mapData[1]}}</p>
             </div>
+<!--            <get-map :parentFunc="this.getMapData" ></get-map>-->
+<!--            <get-map @backMapData="getMapData"></get-map>-->
 
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">提交</el-button>
           </el-form-item>
         </el-form>
-    <el-dialog style="height: 120%" title="选择地点" :visible.sync="dialogFormVisible" append-to-body>
-      <get-map :get-map-data="this.getMapData"></get-map>
+    <el-dialog style="height: 120%" title="选择地点" :visible.sync="isShowMapDialog" append-to-body>
+      <p>{{form.mapData[0]}}</p>
+      <get-map :parentFunc="this.getMapData" :new-center="form.mapData[0]"></get-map>
     </el-dialog>
   </div>
 </template>
@@ -59,7 +65,8 @@ export default {
   name: "editShopForm",
   data() {
     return {
-      dialogFormVisible:false,
+      isShowMapDialog:false,
+
     }
   },
   props: ['form'],
@@ -68,13 +75,42 @@ export default {
   },
   methods: {
     openMap(){
-      this.dialogFormVisible = true
-    }
+      this.isShowMapDialog = true
+    },
+    getMapData(mapData) {
+      this.form.mapData = mapData
+      this.isShowMapDialog = false
+    },
+    addFreight() {
+      function compare(p){ //这是比较函数
+        return function(m,n){
+          const a = m[p];
+          const b = n[p];
+          return a - b; //升序
+        }
+      }
+      this.form.freight.sort(compare("km"))
+      if (this.form.freight[[this.form.freight.length - 1]].km === this.form.max_range) {
+        this.$message({
+              message:  "添加失败，请修改最大配送范围后再次尝试！",
+              type: "error"
+            }
+        )
+        return
+      }
+      this.form.freight.push({
+        km: this.form.freight[this.form.freight.length -1].km + 1,
+        cny: this.form.freight[this.form.freight.length -1].cny + 2
+      });
+    },
+    deleteAllFreight() {
+      this.form.freight = [{
+        km: 1,
+        cny:3
+      }]
+    },
   },
-  getMapData(mapData) {
-    this.form.mapData = mapData
-    this.dialogFormVisible = false
-  }
+
 }
 </script>
 

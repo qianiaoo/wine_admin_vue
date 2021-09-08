@@ -71,7 +71,14 @@
           label="库存"  >
         <template slot-scope="scope" >
           <el-input-number size="mini" v-model="scope.row.stock"></el-input-number>
-
+        </template>
+      </el-table-column>
+      <el-table-column
+          sortable
+          prop="isShowHP"
+          label="首页推荐"  >
+        <template slot-scope="scope" >
+          <el-switch v-model="scope.row.isShowHP"></el-switch>
         </template>
       </el-table-column>
       <el-table-column
@@ -132,6 +139,7 @@ export default {
       dialogFormVisible:false,
       count:4,
       tableData: [{
+        isShowHP: true,
         brand : "红星二锅头",
         category_name: "白酒",
         item: '二锅头',
@@ -149,6 +157,8 @@ export default {
         capacity:'300',
 
       }, {
+        isShowHP: true,
+
         brand : "红星二锅头",
         category_name: "白酒",
         item: '二锅头',
@@ -165,6 +175,8 @@ export default {
         degrees: '50',
         capacity:'300',
       }, {
+        isShowHP: true,
+
         brand : "红星二锅头",
         category_name: "白酒",
         item: '二锅头',
@@ -181,6 +193,8 @@ export default {
         degrees: '50',
         capacity:'300',
       }, {
+        isShowHP: false,
+
         brand : "红星二锅头",
         category_name: "白酒",
         item: '二锅头',

@@ -16,8 +16,8 @@
             <el-menu-item index="shopList">店铺列表</el-menu-item>
           </el-submenu>
           <el-submenu index="4">
-            <template slot="title"><i class="el-icon-star-on"></i>图表</template>
-            <el-menu-item index="visitor">用户分布</el-menu-item>
+            <template slot="title"><i class="el-icon-star-on"></i>订单管理</template>
+            <el-menu-item index="orderList">订单列表</el-menu-item>
             <!-- <el-menu-item index="newMember">用户数据</el-menu-item> -->
           </el-submenu>
           <el-submenu index="5">

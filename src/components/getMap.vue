@@ -19,6 +19,7 @@
     <div style="text-align: center">
       <p>{{ address }}</p>
       <p>经纬度:{{ center }}</p>
+      <p>{{newCenter}}</p>
       <el-button type="primary" @click="callParent">确定</el-button>
       <span></span>
     </div>
@@ -36,12 +37,19 @@ let amapManager = new AMapManager();
 export default {
   name: "getMap",
   props: {
-    getMapData: {
+    parentFunc: {
       type: Function,
       require: true,
       default: null,
     },
+    newCenter: {
+      type: Array,
+      default: null,
+    },
+
   },
+
+
   data() {
     const self = this;
     return {
@@ -56,6 +64,7 @@ export default {
       marker: "",
       amapManager,
       zoom: 12,
+      // fakeCenter:[],
       center: [116.397451, 39.909187],
       events: {
         init: (o) => {
@@ -98,7 +107,7 @@ export default {
       },
       plugin: ["ToolBar",
         {
-          // pName: "MapType",
+          pName: "MapType",
           defaultType: 0,
           events: {
             init(o) {
@@ -110,6 +119,7 @@ export default {
           pName: "Geolocation",
           events: {
             init(o) {
+
               // o 是高德地图定位插件实例
               o.getCurrentPosition((status, result) => {
                 // console.log(JSON.stringify(result));
@@ -135,11 +145,12 @@ export default {
       ],
     };
   },
+
   methods: {
     callParent() {
-      // this.$emit("getMapData", [this.center,this.address])
+      // this.$emit("backMapData", [this.center,this.address])
       // this.$parent.getMapData([this.center, this.address])
-      this.getMapData([this.center, this.address])
+      this.parentFunc([this.center, this.address])
     },
     onSearchResult(pois) {
       if (pois.length > 0) {

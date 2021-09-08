@@ -31,6 +31,11 @@
           <el-form-item label="原产地" prop="origin">
             <el-input v-model="form.origin"></el-input>
           </el-form-item>
+          <el-form-item label="首页推荐" prop="isShowHP">
+            <el-switch
+                v-model="form.isShowHP" >
+            </el-switch>
+          </el-form-item>
           <el-form-item label="商品名" prop="item">
             <el-input v-model="form.item"></el-input>
           </el-form-item>
@@ -102,7 +107,7 @@ export default {
       fileList : [],
       baseUrl,
       form: {
-
+        isShowHP:false,
         brand : "",
         category_name: "",
         item: '',
@@ -187,8 +192,34 @@ export default {
       return isIMAGE && isLt2M;
     }
 
+  },
+  created() {
+    if (this.$route.query.shop_id) {
+      this.shop_id = this.$route.query.shop_id;
+    }else{
+      this.shop_id = Math.ceil(Math.random()*10);
+      this.$msgbox({
+        title: '提示',
+        message: '添加食品需要选择一个商铺，先去就去选择商铺吗？',
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            this.$router.push('/shopList');
+            done();
+          } else {
+            this.$message({
+              type: 'info',
+              message: '取消'
+            });
+            done();
+          }
+        }
+      })
+    }
+    this.initData();
   }
-
 
 }
 </script>

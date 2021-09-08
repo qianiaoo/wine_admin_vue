@@ -2,7 +2,7 @@
   <div>
     <head-top></head-top>
     <el-table
-        :data="tableData"
+        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%">
       <el-table-column
           label="店铺名"
@@ -37,8 +37,15 @@
         </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="操作" >
+      <el-table-column align="right" >
+        <template slot="header" >
+          <el-input v-model="search"></el-input>
+        </template>
         <template slot-scope="scope">
+          <el-button
+              size="mini"
+              @click="addGood(scope.$index, scope.row)">添加商品
+          </el-button>
           <el-button
               size="mini"
               @click="handleEdit(scope.$index, scope.row)">编辑
@@ -50,6 +57,25 @@
           </el-button>
         </template>
       </el-table-column>
+<!--      <el-table-column-->
+<!--          align="right">-->
+<!--        <template #header>-->
+<!--        <el-input-->
+<!--            size="mini"-->
+<!--            placeholder="输入关键字查询"-->
+<!--              v-model="search"-->
+<!--             />-->
+<!--        </template>-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-button-->
+<!--              size="mini"-->
+<!--              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>-->
+<!--          <el-button-->
+<!--              size="mini"-->
+<!--              type="danger"-->
+<!--              @click="handleDelete(scope.$index, scope.row)">Delete</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
       <edit-shop-form :form="selectedRow"> </edit-shop-form>
@@ -67,6 +93,7 @@ export default {
   data() {
     return {
       dialogFormVisible:false,
+      search:'',
       selectedRow:{},
       tableData: [{
         name: '十八里河店',
@@ -105,6 +132,9 @@ export default {
   },
 
   methods: {
+    addGood(index, row){
+      this.$router.push({ path: 'addGoods', query: { shop_id: row.id }})
+    },
     handleEdit(index, row) {
       this.selectedRow = row
       this.dialogFormVisible = true
@@ -112,6 +142,10 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    updateShitInput(e){
+      console.log(e)
+      this.$forceUpdate()
     }
   }
 }

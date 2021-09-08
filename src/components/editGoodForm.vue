@@ -27,6 +27,11 @@
     <el-form-item label="原产地" prop="origin">
       <el-input v-model="formModel.origin"></el-input>
     </el-form-item>
+    <el-form-item label="首页推荐" prop="isShowHP">
+      <el-switch
+          v-model="formModel.isShowHP" >
+      </el-switch>
+    </el-form-item>
     <el-form-item label="商品名" prop="item">
       <el-input v-model="formModel.item"></el-input>
     </el-form-item>

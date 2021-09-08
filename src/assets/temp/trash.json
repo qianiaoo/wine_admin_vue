@@ -1,0 +1,45 @@
+{
+  "_id": "cd045e756135a3620b1fdb575e85c5fa",
+  "addTime": "2021-09-06T05:13:04.907Z",
+  "address": {
+    "_id": "cd045e756133553e0abda99e007a395b",
+    "default": true,
+    "detail": "132",
+    "distance": 0.23719653940882962,
+    "label": "家",
+    "location": {
+      "coordinates": [
+        114.302165,
+        30.590161
+      ],
+      "type": "Point"
+    },
+    "phone": "1732222222",
+    "receiver": "ding",
+    "region": [
+      "湖北省",
+      "武汉市",
+      "江岸区"
+    ],
+    "title": "桃源公寓",
+    "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
+  },
+  "delivery_price": 5,
+  "discount": 2,
+  "goods": {
+    "79550af260fb6de22905a79f046fe0c9": {
+      "normal": 2,
+      "num": 2
+    },
+    "cbddf0af60fb6e8119051b276dd45d4f": {
+      "normal": 2,
+      "num": 2
+    }
+  },
+  "id": "20210906131304502638",
+  "money": 43033,
+  "packingsPrice": 30,
+  "paymentChannels": 0,
+  "status": 6,
+  "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
+},
