@@ -173,7 +173,7 @@ export default {
 
     addGood(index, row){
       console.log("即将进行路由跳转，参数为"+row.id)
-      this.$router.push({ path: '/addGoods', query: { shop_id: row.id }})
+      this.$router.push({ path: '/addGoods', params: { shop: row }})
     },
     handleEdit(index, row) {
       this.selectedRow = row

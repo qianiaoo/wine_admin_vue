@@ -40,7 +40,7 @@
             <el-input v-model="form.item"></el-input>
           </el-form-item>
           <el-form-item label="店铺名" prop="shop">
-            <el-input v-model="form.shop"></el-input>
+            <el-input v-model="form.shop_name"></el-input>
           </el-form-item>
             <el-form-item label="度数">
               <el-input v-model="form.degrees" placeholder="酒精度数"></el-input>
@@ -135,6 +135,7 @@ export default {
         price: '',
         sale_count: '',
         shop: '',
+        shop_name:'',
         stock: '',
         thumb_url: '',
         title: '',
@@ -211,10 +212,12 @@ export default {
 
   },
   created() {
-    if (this.$route.query.shop_id) {
-      this.shop_id = this.$route.query.shop_id;
+    if (this.$route.query.shop) {
+      console.log(this.$route.query.shop)
+      this.$data.form.shop=this.$route.query.shop._id
+      this.$data.form.shop_name=this.$route.query.shop.name
       this.$message({
-        message: '您正在为'+this.shop_id+"店铺添加商品。",
+        message: '您正在为'+this.shop._id+"店铺添加商品。",
         type: 'success'
       });
     }else{
@@ -240,6 +243,18 @@ export default {
       })
     }
     this.initData();
+  },
+  mounted(){
+    console.log(this.$route.query.shop)
+    if (this.$route.query.shop) {
+      console.log(this.$route.query.shop)
+      this.$data.form.shop=this.$route.query.shop._id
+      this.$data.form.shop_name=this.$route.query.shop.name
+      this.$message({
+        message: '您正在为'+this.shop._id+"店铺添加商品。",
+        type: 'success'
+      });
+    }
   }
 
 }
