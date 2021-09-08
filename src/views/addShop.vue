@@ -154,7 +154,7 @@ export default {
         cny:3
       }]
     },
-<<<<<<< HEAD
+
     async onSubmit(){
       console.log({data:this.form})
       try {
@@ -177,7 +177,8 @@ export default {
       }catch (e) {
         console.log(e);
       }
-=======
+
+    },
     showInput() {
       this.inputVisible = true;
       this.$nextTick(() => {
@@ -192,7 +193,6 @@ export default {
       }
       this.inputVisible = false;
       this.inputValue = '';
->>>>>>> af5c1a566966111523f7bcb13e123e46534af3a7
     }
   }
 }
