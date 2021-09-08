@@ -7,9 +7,6 @@
           <el-form-item label="最大配送范围">
             <el-input-number v-model="form.max_range"></el-input-number>
           </el-form-item>
-<!--          <el-form-item label="测试">-->
-<!--            <p>{{form.freight}}</p>-->
-<!--          </el-form-item>-->
           <el-form-item label="配送费规则" prop="freight">
             <el-button type="primary" icon="el-icon-plus" circle @click="addFreight"></el-button>
             <el-button type="danger" icon="el-icon-delete" circle @click="deleteAllFreight"></el-button>
@@ -47,7 +44,7 @@
 
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">提交</el-button>
+            <el-button type="primary" @click="updateShop">提交</el-button>
           </el-form-item>
         </el-form>
     <el-dialog style="height: 120%" title="选择地点" :visible.sync="isShowMapDialog" append-to-body>
@@ -59,6 +56,7 @@
 
 <script>
 import getMap from "./getMap";
+import {updateShop} from "../utils/api";
 
 
 export default {
@@ -109,6 +107,25 @@ export default {
         cny:3
       }]
     },
+    async updateShop() {
+      try {
+        const res = await updateShop(this.form);
+        if (res.status === 1) {
+          this.$message({
+            type: 'success',
+            message: '更新店铺信息成功'
+          });
+          this.$emit("updateSuccess");
+        }else{
+          this.$message({
+            type: 'error',
+            message: res.message
+          });
+        }
+      }catch (e) {
+        console.log(e);
+      }
+    }
   },
 
 }

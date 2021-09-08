@@ -57,28 +57,19 @@
           </el-button>
         </template>
       </el-table-column>
-<!--      <el-table-column-->
-<!--          align="right">-->
-<!--        <template #header>-->
-<!--        <el-input-->
-<!--            size="mini"-->
-<!--            placeholder="输入关键字查询"-->
-<!--              v-model="search"-->
-<!--             />-->
-<!--        </template>-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button-->
-<!--              size="mini"-->
-<!--              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>-->
-<!--          <el-button-->
-<!--              size="mini"-->
-<!--              type="danger"-->
-<!--              @click="handleDelete(scope.$index, scope.row)">Delete</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
     </el-table>
+    <div class="Pagination">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="20"
+          layout="total, prev, pager, next"
+          :total="count">
+      </el-pagination>
+    </div>
     <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
-      <edit-shop-form :form="selectedRow"> </edit-shop-form>
+      <edit-shop-form @updateSuccess="updateSuccess" :form="selectedRow"> </edit-shop-form>
     </el-dialog>
   </div>
 </template>
@@ -87,15 +78,21 @@
 
 import headTop from "../components/headTop";
 import editShopForm from "../components/editShopForm";
+import {getShopList} from "../utils/api";
 
 export default {
   name: "shopList",
   data() {
     return {
+      count : 0,
+      offset: 0,
+      limit : 20,
       dialogFormVisible:false,
       search:'',
       selectedRow:{},
+      currentPage: 1,
       tableData: [{
+        id: '1',
         name: '十八里河店',
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
@@ -103,6 +100,7 @@ export default {
         ],
         max_range: 15
       }, {
+        id: '2',
         name: '二七区分店',
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
@@ -110,6 +108,7 @@ export default {
         ],
         max_range: 20
       }, {
+        id: '2',
         name: '广岛分店',
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
@@ -117,6 +116,7 @@ export default {
         ],
         max_range: 33
       }, {
+        id: '3',
         name: '大阪店',
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
@@ -130,10 +130,46 @@ export default {
     editShopForm,
     headTop,
   },
+  created() {
+    this.initData();
+  },
 
   methods: {
+    async initData() {
+      try {
+        const shopData = await getShopList({offset: this.offset, limit: this.limit});
+        if (shopData.status === 1) {
+          this.count = shopData.count;
+          this.tableData = []
+          shopData.data.forEach(item => {
+            const td = {};
+            td.id = item.id;
+            td.name = item.name;
+            td.mapData = item.mapData;
+            td.freight = item.freight;
+            td.max_range = item.max_range;
+            this.tableData.push(td);
+          })
+        }else{
+          throw new Error('获取数据失败');
+        }
+
+      } catch (e) {
+        console.log('获取数据失败', e);
+      }
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.offset = (val - 1)*this.limit;
+      this.getInitialData();
+    },
+
     addGood(index, row){
-      this.$router.push({ path: 'addGoods', query: { shop_id: row.id }})
+      console.log("即将进行路由跳转，参数为"+row.id)
+      this.$router.push({ path: '/addGoods', query: { shop_id: row.id }})
     },
     handleEdit(index, row) {
       this.selectedRow = row
@@ -143,10 +179,10 @@ export default {
     handleDelete(index, row) {
       console.log(index, row);
     },
-    updateShitInput(e){
-      console.log(e)
-      this.$forceUpdate()
-    }
+    updateSuccess() {
+      this.dialogFormVisible = false;
+      this.initData();
+    },
   }
 }
 </script>

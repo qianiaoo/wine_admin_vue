@@ -109,7 +109,6 @@
           label="派送费">
       </el-table-column>
       <el-table-column
-          prop="status"
           label="订单状态"
           width="100"
           :filters="[{ text: '未接单', value: '1' }, { text: '已接单', value: '6' }]"
@@ -117,8 +116,8 @@
           filter-placement="bottom-end">
         <template slot-scope="scope">
           <el-tag
-              :type="scope.row.tag === '家' ? 'primary' : 'success'"
-              disable-transitions>{{scope.row.status}}</el-tag>
+              :type="scope.row.status === 6 ? 'primary' : 'success'"
+              disable-transitions>{{orderStatusDic[scope.row.status]}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -134,7 +133,13 @@
       </el-table-column>
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status===6" @click="orderTake(scope.row)">接单</el-button>
+          <el-button v-if="scope.row.status===8" @click="orderChange(scope.row, 3)">接单</el-button> 8->3
+          <el-button v-if="scope.row.status===8" @click="orderChange(scope.row, 4)">拒单</el-button> 8->4
+          <el-button v-if="scope.row.status===3" @click="orderChange(scope.row, 2)">确认出库</el-button> 3->2
+          <el-button v-if="scope.row.status===2" @click="orderChange(scope.row, 1)">完成订单</el-button> 2->1
+          <el-button v-if="scope.row.status===7" @click="refunds">退款</el-button> 7->9
+          <el-button v-if="scope.row.status===3" @click="orderChange(scope.row, 9)">取消订单</el-button> 3->9
+          <el-button v-if="scope.row.status===2" @click="orderChange(scope.row, 9)">取消订单</el-button> 2->9
           <!--          <el-button-->
           <!--              size="small"-->
           <!--              @click="handleEdit(scope.row)"></el-button>-->
@@ -145,15 +150,42 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="Pagination">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="20"
+          layout="total, prev, pager, next"
+          :total="count">
+      </el-pagination>
+    </div>
 
   </div>
 </template>
 
 <script>
+import {getOrderList, updateOrder} from "../utils/api";
+
 export default {
   name: "orderTable",
   data() {
     return {
+      offset: 0,
+      limit : 20,
+      selectedRow:{},
+      currentPage: 1,
+      orderStatusDic: {
+        1: "订单已完成",
+        2: "正在配送",
+        3: "商家已接单",
+        4: "商家拒绝接单",
+        5: "等待支付",
+        6: "取消支付",
+        7: "正在退款",
+        8: "支付完成",
+        9: "订单已取消",
+      },
       tableData: [{
         "_id": "cd045e756135a3620b1fdb575e85c5fa",
         "addTime": "2021-09-06T05:13:04.907Z",
@@ -297,18 +329,75 @@ export default {
           "money": 43033,
           "packingsPrice": 30,
           "paymentChannels": 0,
-          "status": 6,
+          "status": 8,
           "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
         },
       ],
     }
   },
   methods: {
+    refunds() {
+      console.log("将跳转至退款界面");
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.offset = (val - 1)*this.limit;
+      this.getInitialData();
+    },
+    async initData() {
+      const data = {
+        offset: this.offset,
+        limit: this.limit,
+        needStatus: this.needStatus,
+      }
+      const res = await getOrderList(data)
+      try {
+        if (res.status === 1) {
+          this.tableData = res.data
+          // res.data.forEach(item =>{
+          //   const td = {}
+          //   td.
+          // })
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message
+          });
+        }
+      }catch (e) {
+        console.log(e);
+      }
+    },
     filterTag(value, row) {
       return row.status === value;
     },
-    orderTake(row) {
-      console.log(row)
+    handleUpdateRes(res) {
+      try {
+        if (res.status === 1) {
+          this.$message({
+            type: 'success',
+            message: '更新订单状态成功'
+          });
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message
+          });
+        }
+      }catch (e) {
+        console.log(e)
+      }
+    },
+    async orderChange(row,statusTo) {
+      const data = {
+        _id: row._id,
+        status: statusTo
+      }
+      const res = await updateOrder(data)
+      this.handleUpdateRes(res);
     },
     findGoodById(id) {
       console.log(id)
@@ -328,16 +417,22 @@ export default {
       }
       console.log("newGoods"+newGoods)
       return newGoods;
-    }
+    },
+
 
   },
   computed: {
     goodsKeys: function (index) {
       return Object.keys(this.tableData[index.goods]);
+    },
+    count: function () {
+      return this.tableData.length;
     }
   },
-  props:['filters']
-
+  props:['filters', 'needStatus'],
+  created() {
+    this.initData();
+  }
 }
 </script>
 

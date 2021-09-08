@@ -71,6 +71,23 @@
 
             </el-upload>
           </el-form-item>
+          <el-form-item label="上传图片列表2">
+            <el-upload
+                accept="image/jpeg,image/gif,image/png"
+                :action="baseUrl+'/api/uploadpics'"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :on-success="uploadSuccess"
+
+                :file-list="form.pic_array"
+                list-type="picture"
+                :before-upload="onBeforeUpload"
+                multiple>
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">请上传图片格式文件</div>
+
+            </el-upload>
+          </el-form-item>
 
           <el-form-item label="上传封面">
             <el-upload
@@ -196,6 +213,10 @@ export default {
   created() {
     if (this.$route.query.shop_id) {
       this.shop_id = this.$route.query.shop_id;
+      this.$message({
+        message: '您正在为'+this.shop_id+"店铺添加商品。",
+        type: 'success'
+      });
     }else{
       this.shop_id = Math.ceil(Math.random()*10);
       this.$msgbox({

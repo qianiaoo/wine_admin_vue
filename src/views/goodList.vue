@@ -97,16 +97,16 @@
         </template>
       </el-table-column>
     </el-table>
-<!--    <div class="Pagination">-->
-<!--      <el-pagination-->
-<!--          @size-change="handleSizeChange"-->
-<!--          @current-change="handleCurrentChange"-->
-<!--          :current-page="currentPage"-->
-<!--          :page-size="20"-->
-<!--          layout="total, prev, pager, next"-->
-<!--          :total="count">-->
-<!--      </el-pagination>-->
-<!--    </div>-->
+    <div class="Pagination">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="20"
+          layout="total, prev, pager, next"
+          :total="count">
+      </el-pagination>
+    </div>
     <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
       <editGoodForm :formModel="selectedRow"> </editGoodForm>
     </el-dialog>
