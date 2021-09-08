@@ -138,17 +138,21 @@ export default {
     async initData() {
       try {
         const shopData = await getShopList({offset: this.offset, limit: this.limit});
-        if (shopData.status === 1) {
-          this.count = shopData.count;
+        console.log(shopData.data.data)
+        if (shopData.status === 200) {
+          //this.count = shopData.data.data.length;
           this.tableData = []
-          shopData.data.forEach(item => {
+          shopData.data.data.forEach(item => {
+            item=JSON.parse(item);
             const td = {};
-            td.id = item.id;
+            td.id = item._id;
+            td.category = item.category
             td.name = item.name;
-            td.mapData = item.mapData;
+            td.mapData = [item.location.coordinates,item.address];
             td.freight = item.freight;
-            td.max_range = item.max_range;
+            td.max_range = item.postRange;
             this.tableData.push(td);
+            console.log(td.mapData)
           })
         }else{
           throw new Error('获取数据失败');
