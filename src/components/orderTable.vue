@@ -1,24 +1,15 @@
 <template>
   <div>
-<!--    <span>aaa: {{getArrGoods(tableData[0].goods)}}</span>-->
-<!--    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"-->
-    <!--        :data="tableData.filter(data => !filters.status || data.status === filters.status)"-->
 
     <el-table
-            :data="tableData.filter(data => !filters || data.status === filters)"
+            :data="tableData"
+            @filter-change="filterChange"
 
         style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-<!--            <el-table-column-->
-<!--                label="日期"-->
-<!--                width="180">-->
-<!--              <template slot-scope="scope">-->
-<!--                <i class="el-icon-time"></i>-->
-<!--                <span style="margin-left: 10px">{{ scope.row.addTime }}</span>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
+
             <el-form-item label="地址细节">
               <span>{{ props.row.address.detail }}</span>
             </el-form-item>
@@ -32,55 +23,13 @@
               <span>{{ props.row.address.region }}</span>
             </el-form-item>
             <el-form-item label="商品列表">
-<!--              <span>{{ getArrGoods(props.row.goods) }}</span>-->
-<!--              <el-button>aa</el-button>-->
+
               <el-table :data="getArrGoods(props.row.goods)">
                 <el-table-column label="品牌名" prop="brand"></el-table-column>
                 <el-table-column label="数量" prop="num"></el-table-column>
                 <el-table-column label="温度" prop="normal"></el-table-column>
               </el-table>
             </el-form-item>
-<!--            <el-form-item label="商品">-->
-<!--              <span>{{props.rows.}}}</span>-->
-<!--&lt;!&ndash;              <template slot-scope="scope">&ndash;&gt;-->
-
-<!--&lt;!&ndash;                <el-table :data="getArrGoods(scope.row.goods)">&ndash;&gt;-->
-<!--&lt;!&ndash;                  &lt;!&ndash;              <span></span>&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;                  <el-table-column label="商品名" prop="brand"></el-table-column>&ndash;&gt;-->
-<!--&lt;!&ndash;                  <el-table-column label="商品数量" prop="normal"></el-table-column>&ndash;&gt;-->
-<!--&lt;!&ndash;                  <el-table-column label="运输温度" prop="num"></el-table-column>&ndash;&gt;-->
-<!--&lt;!&ndash;                </el-table>&ndash;&gt;-->
-
-<!--&lt;!&ndash;              </template>&ndash;&gt;-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="图片列表">-->
-<!--              <span>{{ props.row.pic_array }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="售价">-->
-<!--              <span>{{ props.row.price }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="销售量">-->
-<!--              <span>{{ props.row.sale_count }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="店铺名">-->
-<!--              <span>{{ props.row.shop }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="库存">-->
-<!--              <span>{{ props.row.stock }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="封面图片">-->
-<!--              <span>{{ props.row.thumb_url }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="标题">-->
-<!--              <span>{{ props.row.title }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="度数">-->
-<!--              <span>{{ props.row.degrees }}</span>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="容量">-->
-<!--              <span>{{ props.row.capacity }}</span>-->
-<!--            </el-form-item>-->
-
 
           </el-form>
         </template>
@@ -91,7 +40,7 @@
           prop="addTime">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">{{ scope.row.addTime }}</span>
+          <span style="margin-left: 10px">{{ getDateByTimestamp(scope.row.addTime.$date) }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -110,8 +59,10 @@
       </el-table-column>
       <el-table-column
           label="订单状态"
-          width="100"
-          :filters="[{ text: '未接单', value: '1' }, { text: '已接单', value: '6' }]"
+          :filters="[{ text: '订单已完成', value: '1' },{ text: '正在配送', value: '2' },
+           { text: '商家已接单', value: '3' },{ text: '商家拒绝接单', value: '4' },
+           { text: '等待支付', value: '5' },{ text: '取消支付', value: '6' },{ text: '正在退款', value: '7' }
+           ,{ text: '支付完成', value: '8' },{ text: '支付取消', value: '9' }]"
           :filter-method="filterTag"
           filter-placement="bottom-end">
         <template slot-scope="scope">
@@ -131,15 +82,15 @@
           label="收货人"
           prop="address.receiver">
       </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作"  align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status===8" @click="orderChange(scope.row, 3)">接单</el-button> 8->3
-          <el-button v-if="scope.row.status===8" @click="orderChange(scope.row, 4)">拒单</el-button> 8->4
-          <el-button v-if="scope.row.status===3" @click="orderChange(scope.row, 2)">确认出库</el-button> 3->2
-          <el-button v-if="scope.row.status===2" @click="orderChange(scope.row, 1)">完成订单</el-button> 2->1
-          <el-button v-if="scope.row.status===7" @click="refunds">退款</el-button> 7->9
-          <el-button v-if="scope.row.status===3" @click="orderChange(scope.row, 9)">取消订单</el-button> 3->9
-          <el-button v-if="scope.row.status===2" @click="orderChange(scope.row, 9)">取消订单</el-button> 2->9
+          <el-button  v-if="scope.row.status===8" @click="orderChange(scope.row, 3)">接单</el-button>
+          <el-button   v-if="scope.row.status===8" @click="orderChange(scope.row, 4)">拒单</el-button>
+          <el-button  v-if="scope.row.status===3" @click="orderChange(scope.row, 2)">确认出库</el-button>
+          <el-button  v-if="scope.row.status===2" @click="orderChange(scope.row, 1)">完成订单</el-button>
+          <el-button  v-if="scope.row.status===7" @click="refunds">退款</el-button>
+          <el-button  v-if="scope.row.status===3" @click="orderChange(scope.row, 9)">取消订单</el-button>
+          <el-button  v-if="scope.row.status===2" @click="orderChange(scope.row, 9)">取消订单</el-button>
           <!--          <el-button-->
           <!--              size="small"-->
           <!--              @click="handleEdit(scope.row)"></el-button>-->
@@ -172,6 +123,7 @@ export default {
   data() {
     return {
       offset: 0,
+      needStatus: [],
       limit : 20,
       selectedRow:{},
       currentPage: 1,
@@ -184,158 +136,19 @@ export default {
         6: "取消支付",
         7: "正在退款",
         8: "支付完成",
-        9: "订单已取消",
+        9: "订单取消",
       },
-      tableData: [{
-        "_id": "cd045e756135a3620b1fdb575e85c5fa",
-        "addTime": "2021-09-06T05:13:04.907Z",
-        "address": {
-          "_id": "cd045e756133553e0abda99e007a395b",
-          "default": true,
-          "detail": "132",
-          "distance": 0.23719653940882962,
-          "label": "家",
-          "location": {
-            "coordinates": [
-              114.302165,
-              30.590161
-            ],
-            "type": "Point"
-          },
-          "phone": "123",
-          "receiver": "ding",
-          "region": [
-            "湖北省",
-            "武汉市",
-            "江岸区"
-          ],
-          "title": "桃源公寓",
-          "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-        },
-        "delivery_price": 5,
-        "discount": 2,
-        "goods": {
-          "79550af260fb6de22905a79f046fe0c9": {
-            "brand": "二锅头",
-            "normal": 2,
-            "num": 2
-          },
-          "cbddf0af60fb6e8119051b276dd45d4f": {
-            "brand": "二锅头",
-
-            "normal": 2,
-            "num": 2
-          }
-        },
-        "id": "20210906131304502638",
-        "money": 43033,
-        "packingsPrice": 30,
-        "paymentChannels": 0,
-        "status": 6,
-        "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-      },
-        {
-          "_id": "cd045e756135a3620b1fdb575e85c5fa",
-          "addTime": "2021-09-06T05:13:04.907Z",
-          "address": {
-            "_id": "cd045e756133553e0abda99e007a395b",
-            "default": true,
-            "detail": "132",
-            "distance": 0.23719653940882962,
-            "label": "家",
-            "location": {
-              "coordinates": [
-                114.302165,
-                30.590161
-              ],
-              "type": "Point"
-            },
-            "phone": "123",
-            "receiver": "ding",
-            "region": [
-              "湖北省",
-              "武汉市",
-              "江岸区"
-            ],
-            "title": "桃源公寓",
-            "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-          },
-          "delivery_price": 5,
-          "discount": 2,
-          "goods": {
-            "79550af260fb6de22905a79f046fe0c9": {
-              "brand": "二锅头",
-
-              "normal": 2,
-              "num": 2
-            },
-            "cbddf0af60fb6e8119051b276dd45d4f": {
-              "brand": "二锅头",
-
-              "normal": 2,
-              "num": 2
-            }
-          },
-          "id": "20210906131304502638",
-          "money": 43033,
-          "packingsPrice": 30,
-          "paymentChannels": 0,
-          "status": 6,
-          "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-        },
-        {
-          "_id": "cd045e756135a3620b1fdb575e85c5fa",
-          "addTime": "2021-09-06T05:13:04.907Z",
-          "address": {
-            "_id": "cd045e756133553e0abda99e007a395b",
-            "default": true,
-            "detail": "132",
-            "distance": 0.23719653940882962,
-            "label": "家",
-            "location": {
-              "coordinates": [
-                114.302165,
-                30.590161
-              ],
-              "type": "Point"
-            },
-            "phone": "123",
-            "receiver": "ding",
-            "region": [
-              "湖北省",
-              "武汉市",
-              "江岸区"
-            ],
-            "title": "桃源公寓",
-            "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-          },
-          "delivery_price": 5,
-          "discount": 2,
-          "goods": {
-            "79550af260fb6de22905a79f046fe0c9": {
-              "brand": "二锅头",
-
-              "normal": 2,
-              "num": 2
-            },
-            "cbddf0af60fb6e8119051b276dd45d4f": {
-              "brand": "二锅头",
-
-              "normal": 2,
-              "num": 2
-            }
-          },
-          "id": "20210906131304502638",
-          "money": 43033,
-          "packingsPrice": 30,
-          "paymentChannels": 0,
-          "status": 8,
-          "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-        },
-      ],
+      tableData: [],
     }
   },
   methods: {
+    getDateByTimestamp(timestamp) {
+      const date = new Date(timestamp);
+      const Y = date.getFullYear() + '-';
+      const M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+      const D = date.getDate() + ' ';
+      return (Y + M + D);
+    },
     refunds() {
       console.log("将跳转至退款界面");
     },
@@ -348,19 +161,26 @@ export default {
       this.getInitialData();
     },
     async initData() {
+      this.tableData = []
+      console.log("init之前：：", this.needStatus)
+      const needStatusStr = this.needStatus.toString()
       const data = {
         offset: this.offset,
         limit: this.limit,
-        needStatus: this.needStatus,
+        needStatus: needStatusStr,
       }
-      const res = await getOrderList(data)
-      try {
-        if (res.status === 1) {
-          this.tableData = res.data
-          // res.data.forEach(item =>{
-          //   const td = {}
-          //   td.
-          // })
+      const res_data = await getOrderList(data)
+      // const res = res_data.parseJson();
+      console.log(res_data)
+      const res = res_data.data   //由JSON字符串转化为JSON对象
+        try {
+        if (res.errcode === 0) {
+          // this.tableData = res.data
+          res.data.forEach(item =>{
+            // const td = {}
+            item = JSON.parse(item);
+            this.tableData.push(item)
+          })
         } else {
           this.$message({
             type: 'error',
@@ -372,7 +192,14 @@ export default {
       }
     },
     filterTag(value, row) {
-      return row.status === value;
+      // console.log("filterTag",value,row)
+      return row.status == value;
+    },
+    filterChange(filters) {
+      this.needStatus = filters['el-table_1_column_6'];
+      this.initData();
+      console.log('filters:::',filters['el-table_1_column_6'])
+
     },
     handleUpdateRes(res) {
       try {
@@ -429,7 +256,9 @@ export default {
       return this.tableData.length;
     }
   },
-  props:['filters', 'needStatus'],
+  props: {
+
+  },
   created() {
     this.initData();
   }

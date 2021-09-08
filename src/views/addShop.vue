@@ -7,6 +7,27 @@
           <el-form-item label="店铺名" prop="name">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
+          <el-form-item label="分类标签">
+            <el-tag
+                v-for="tag in form.category"
+                :key="tag"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(tag)">
+              {{tag}}
+            </el-tag>
+            <el-input
+                class="input-new-tag"
+                v-if="inputVisible"
+                v-model="inputValue"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="handleInputConfirm"
+                @blur="handleInputConfirm"
+            >
+            </el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新分类</el-button>
+          </el-form-item>
           <el-form-item label="最大配送范围">
             <el-input-number v-model="form.max_range" :precision="1"></el-input-number>
           </el-form-item>
@@ -71,10 +92,11 @@ export default {
   },
   data() {
     return {
-
-      
+      inputValue:'',
+      inputVisible: false,
       dialogFormVisible: false,
       form: {
+        category: [],
         mapData: [],
         name:'',
         freight: [],
@@ -123,12 +145,16 @@ export default {
         cny: this.form.tableData[this.form.tableData.length -1].cny + 2
       });
     },
+    handleClose(tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+    },
     deleteAllFreight() {
       this.form.tableData = [{
         km: 1,
         cny:3
       }]
     },
+<<<<<<< HEAD
     async onSubmit(){
       console.log({data:this.form})
       try {
@@ -151,11 +177,41 @@ export default {
       }catch (e) {
         console.log(e);
       }
+=======
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(() => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    handleInputConfirm() {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        this.form.category.push(inputValue);
+      }
+      this.inputVisible = false;
+      this.inputValue = '';
+>>>>>>> af5c1a566966111523f7bcb13e123e46534af3a7
     }
   }
 }
 </script>
 
 <style scoped>
-
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
 </style>

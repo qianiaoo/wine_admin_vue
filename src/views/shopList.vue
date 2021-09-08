@@ -38,7 +38,7 @@
         </template>
       </el-table-column>
       <el-table-column align="right" >
-        <template slot="header" >
+        <template #header >
           <el-input v-model="search"></el-input>
         </template>
         <template slot-scope="scope">
