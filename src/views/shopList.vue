@@ -94,6 +94,7 @@ export default {
       tableData: [{
         id: '1',
         name: '十八里河店',
+        category: [],
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
           {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
@@ -102,6 +103,8 @@ export default {
       }, {
         id: '2',
         name: '二七区分店',
+        category: [],
+
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
           {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
@@ -110,6 +113,8 @@ export default {
       }, {
         id: '2',
         name: '广岛分店',
+        category: [],
+
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
           {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
@@ -118,6 +123,8 @@ export default {
       }, {
         id: '3',
         name: '大阪店',
+        category: [],
+
         mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
         freight: [
           {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
