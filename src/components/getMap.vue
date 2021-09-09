@@ -189,7 +189,7 @@ export default {
 .search-box {
   position: absolute;
   top: 25px;
-  left: 5%;
+  left: 10%;
 
 }
 

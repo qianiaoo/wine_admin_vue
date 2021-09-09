@@ -146,7 +146,7 @@ export default {
       });
     },
     handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      this.form.category.splice(this.form.category.indexOf(tag), 1);
     },
     deleteAllFreight() {
       this.form.tableData = [{
