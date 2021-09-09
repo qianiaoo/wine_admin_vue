@@ -116,7 +116,7 @@
 import headTop from '../components/headTop'
 // import {addGoods} from "../utils/api";
 import {baseUrl, baseImgPath, addGoods} from "../utils/api";
-import {deletePic} from "../utils/api"
+//import {deletePic} from "../utils/api"
 export default {
   data() {
 
@@ -217,6 +217,7 @@ export default {
     },
     handleRemove(file){
      //deletePic({pic:file.response.name})
+     console.log(file)
       this.form.thumb_url=""
     },
     uploadImg(file) {
