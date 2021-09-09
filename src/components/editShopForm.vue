@@ -149,9 +149,11 @@ export default {
       this.form.category.splice(this.form.category.indexOf(tag), 1);
     },
     async updateShop() {
+      console.log({data:this.form})
       try {
-        const res = await updateShop(this.form);
-        if (res.status === 1) {
+        const res = await updateShop(JSON.stringify(this.form));
+        console.log(res)
+        if (res.data.errcode === 0) {
           this.$message({
             type: 'success',
             message: '更新店铺信息成功'

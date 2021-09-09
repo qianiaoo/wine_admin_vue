@@ -9,11 +9,10 @@
           </el-form-item>
           <el-form-item label="分类名" prop="category_name">
             <el-select v-model="form.category_name" placeholder="请选择分类">
-              <el-option label="白酒" value="白酒"></el-option>
-              <el-option label="啤酒" value="啤酒"></el-option>
-              <el-option label="红酒" value="红酒"></el-option>
-              <el-option label="米酒" value="米酒"></el-option>
-              <el-option label="梅酒" value="梅酒"></el-option>
+              <el-option v-for="item in form.category"
+              :key="item"
+              :label="itme"
+              :value="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="售价" prop="price">
@@ -40,7 +39,7 @@
             <el-input v-model="form.item"></el-input>
           </el-form-item>
           <el-form-item label="店铺名" prop="shop">
-            <el-input v-model="form.shop"></el-input>
+            <el-input v-model="form.shop_name"></el-input>
           </el-form-item>
             <el-form-item label="度数">
               <el-input v-model="form.degrees" placeholder="酒精度数"></el-input>
@@ -57,12 +56,12 @@
           <el-form-item label="上传图片列表">
             <el-upload
                 accept="image/jpeg,image/gif,image/png"
-                :action="baseUrl+'/api/uploadpics'"
+                :action="baseUrl+'/api/uploadpics?shop_id='+form.shop"
                 :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :on-success="uploadSuccess"
+                :on-remove="handleRemove1"
+                :on-success="uploadSuccess1"
 
-                :file-list="form.pic_array"
+                :file-list="form.pic_array1"
                 list-type="picture"
             :before-upload="onBeforeUpload"
                 multiple>
@@ -76,10 +75,10 @@
                 accept="image/jpeg,image/gif,image/png"
                 :action="baseUrl+'/api/uploadpics'"
                 :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :on-success="uploadSuccess"
+                :on-remove="handleRemove2"
+                :on-success="uploadSuccess2"
 
-                :file-list="form.pic_array"
+                :file-list="form.pic_array2"
                 list-type="picture"
                 :before-upload="onBeforeUpload"
                 multiple>
@@ -92,8 +91,9 @@
           <el-form-item label="上传封面">
             <el-upload
                 class="avatar-uploader"
-                :action="baseUrl + '/v1/addimg/food'"
+                :action="baseUrl + '/api/uploadpics'"
                 :show-file-list="false"
+                :on-remove="handleRemove"
                 :on-success="uploadImg"
                 :before-upload="beforeImgUpload">
               <img v-if="form.thumb_url" :src="baseImgPath + form.thumb_url" class="avatar">
@@ -115,7 +115,8 @@
 <script>
 import headTop from '../components/headTop'
 // import {addGoods} from "../utils/api";
-import {baseUrl, baseImgPath} from "../utils/api";
+import {baseUrl, baseImgPath, addGoods} from "../utils/api";
+//import {deletePic} from "../utils/api"
 export default {
   data() {
 
@@ -131,10 +132,12 @@ export default {
         marketPrice: '',
         origin: '',
         packingsPrice: '',
-        pic_array: [],
+        pic_array1: [],
+        pic_array2: [],
         price: '',
         sale_count: '',
         shop: '',
+        shop_name:'',
         stock: '',
         thumb_url: '',
         title: '',
@@ -166,32 +169,70 @@ export default {
     headTop
   },
   methods: {
-    onSubmit(form) {
-      this.$refs[form].validate(async (valid) => {
-        if (valid) {
-          const params = {
-            ...this.form,
-            specification: this.specification
-          }
-          console.log(params)
-          console.log("hhhhh")
-          // const res = await addGoods(params)
-          // console.log(res)
+    async onSubmit() {
+      try {
+        const res = await addGoods(JSON.stringify(this.form));
+        console.log(res)
+        if (res.data.errcode === 0) {
+          this.$message({
+            type: 'success',
+            message: '更新店铺信息成功'
+          });
+          this.$emit("updateSuccess");
+        }else{
+          this.$message({
+            type: 'error',
+            message: res.message
+          });
         }
-      })
+      }catch (e) {
+        console.log(e);
+      }
     },
     handlePreview(file) {
       console.log(file)
     },
-    handleRemove(file,fileList) {
-      console.log(file,fileList)
+    handleRemove1(file) {
+      for(var i=0;i<this.form.pic_array1.length;i++){
+        if(this.form.pic_array1[i]==file.response.name){
+          this.form.pic_array1[i]=null
+          this.form.pic_array1=this.form.pic_array1.filter(n => n)
+          break
+        }
+      }
+      console.log(file.response.name)
+      console.log(this.form.pic_array1)
     },
-    uploadImg() {
-
+    handleRemove2(file) {
+      //deletePic({pic:file.response.name})
+      for(var i=0;i<this.form.pic_array2.length;i++){
+        if(this.form.pic_array2[i]==file.response.name){
+          this.form.pic_array2[i]=null
+          this.form.pic_array2=this.form.pic_array2.filter(n => n)
+          break
+        }
+      }
+      console.log(file.response.name)
+      console.log(this.form.pic_array2)
     },
-    uploadSuccess(file) {
+    handleRemove(file){
+     //deletePic({pic:file.response.name})
+     console.log(file)
+      this.form.thumb_url=""
+    },
+    uploadImg(file) {
+      this.form.thumb_url=file['name']
+    },
+    uploadSuccess1(file) {
       console.log(file)
-      console.log(this.form.pic_array)
+      console.log(this.form)
+      this.form.pic_array1.push(file['name'])
+      console.log(this.form.pic_array1)
+    },
+    uploadSuccess2(file) {
+      console.log(file)
+      this.form.pic_array2.push(file['name'])
+      console.log(this.form.pic_array2)
     },
     beforeImgUpload(){
 
@@ -211,13 +252,16 @@ export default {
 
   },
   created() {
-    if (this.$route.query.shop_id) {
-      this.shop_id = this.$route.query.shop_id;
+    if (this.$route.query.shop) {
+      console.log(this.$route.query.shop)
+      this.$data.form.shop=this.$route.query.shop.id
+      this.$data.form.shop_name=this.$route.query.shop.name
       this.$message({
-        message: '您正在为'+this.shop_id+"店铺添加商品。",
+        message: '您正在为'+this.shop._id+"店铺添加商品。",
         type: 'success'
       });
     }else{
+      console.log('here')
       this.shop_id = Math.ceil(Math.random()*10);
       this.$msgbox({
         title: '提示',
@@ -240,8 +284,18 @@ export default {
       })
     }
     this.initData();
+  },
+  watch: {
+  $route: {
+    handler: function(val){
+      console.log(val)
+      this.$data.form.shop=val.query.shop_id
+      this.$data.form.shop_name=val.query.shop_name
+      this.$data.form.category=val.query.category
+    }
   }
-
+}
+ 
 }
 </script>
 

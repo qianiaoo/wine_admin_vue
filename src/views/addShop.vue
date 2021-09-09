@@ -32,7 +32,7 @@
             <el-input-number v-model="form.max_range" :precision="1"></el-input-number>
           </el-form-item>
           <el-form-item label="起送费">
-            <el-input-number v-model="form.min_fee" :precision="0" min="0"></el-input-number>
+            <el-input-number v-model="form.min_fee" :precision="0" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="配送费规则" prop="freight">
             <el-button type="primary" icon="el-icon-plus" circle @click="addFreight"></el-button>
@@ -84,6 +84,7 @@
 <script>
 import headTop from "../components/headTop";
 import getMap from "../components/getMap";
+import {updateShop} from "../utils/api";
 export default {
   name: "addShop",
   created() {
@@ -152,6 +153,31 @@ export default {
         km: 1,
         cny:3
       }]
+    },
+
+    async onSubmit(){
+      console.log({data:this.form})
+      try {
+        this.form.freight=this.form.tableData
+        this.form.category='1,2,3,4'
+        const res = await updateShop(JSON.stringify(this.form));
+        console.log(res)
+        if (res.data.errcode === 0) {
+          this.$message({
+            type: 'success',
+            message: '更新店铺信息成功'
+          });
+          this.$emit("updateSuccess");
+        }else{
+          this.$message({
+            type: 'error',
+            message: res.message
+          });
+        }
+      }catch (e) {
+        console.log(e);
+      }
+
     },
     showInput() {
       this.inputVisible = true;

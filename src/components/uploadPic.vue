@@ -64,6 +64,7 @@ export default {
       fileList: [],
       multiple: true,
       formData: "",
+      pic_array:[],
       options: [
         {
           value: "工作报告",

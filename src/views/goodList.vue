@@ -132,6 +132,7 @@
 <script>
 import editGoodForm from "../components/editGoodForm";
 import headTop from "../components/headTop";
+import {getGoodList} from "../utils/api"
 export default {
   data() {
     return {
@@ -220,6 +221,9 @@ export default {
     headTop,
     editGoodForm
   },
+   created() {
+    this.initData();
+  },
   methods: {
     handleEdit(row) {
       console.log(row)
@@ -228,7 +232,47 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row)
-    }
+    },
+    async initData(){
+
+      try {
+        const shopData = await getGoodList({offset: this.offset, limit: this.limit});
+        console.log(shopData.data.data)
+        if (shopData.status === 200) {
+          //this.count = shopData.data.data.length;
+          this.tableData = []
+          shopData.data.data.forEach(item => {
+            item=JSON.parse(item);
+            console.log(item)
+            const td = {};
+            td.isShowHP=item.recommend,
+            td.brand=item.brand,
+            td.category_name= item.category_name,
+            td.item= item.item,
+            td.marketPrice= item.marketPrice,
+            td.origin= item.origin,
+            td.packingsPrice= item.packingsPrice,
+            td.pic_array1= item.pic_array,
+            td.pic_array2= item.product_desc_url,
+            td.price= item.price,
+            td.sale_count= item.sale_count,
+            td.shop= item.shop,
+            td.stock= item.stock,
+            td.thumb_url= item.thumb_url,
+            td.title= item.title,
+            td.degrees= item.specification.split(',')[0],
+            td.capacity=item.specification.split(',')[1],
+            this.tableData.push(td);
+            console.log(td.mapData)
+          })
+        }else{
+          throw new Error('获取数据失败');
+        }
+
+      } catch (e) {
+        console.log('获取数据失败', e);
+      }
+    },
   }
 }
 </script>
