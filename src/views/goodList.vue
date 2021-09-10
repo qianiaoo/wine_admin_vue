@@ -1,6 +1,20 @@
 <template>
   <div>
     <headTop></headTop>
+    <div class="top-div">
+      <span>选择店铺：</span>
+      <template>
+        <el-select v-model="selectShop" @change="selectShopChanged" filterable placeholder="请选择">
+          <el-option
+              v-for="(item, index) in shopNames"
+              :key="shopIds[index]"
+              :label="item"
+              :value="shopIds[index]">
+          </el-option>
+        </el-select>
+      </template>
+    </div>
+
     <el-table
         :data="tableData"
         style="width: 100%">
@@ -82,8 +96,10 @@
         </template>
       </el-table-column>
       <el-table-column
-          label="店铺名"
-          prop="shop">
+          label="店铺名">
+        <template v-slot="scope">
+          <span>{{getShopNameById(scope.row.shop)}}</span>
+        </template>
       </el-table-column>
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
@@ -104,7 +120,7 @@
           :current-page="currentPage"
           :page-size="20"
           layout="total, prev, pager, next"
-          :total="count">
+          :total="total">
       </el-pagination>
     </div>
     <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
@@ -127,18 +143,25 @@
   margin-bottom: 0;
   width: 50%;
 }
+
+
 </style>
 
 <script>
 import editGoodForm from "../components/editGoodForm";
 import headTop from "../components/headTop";
-import {getGoodList} from "../utils/api"
+import {getGoodList, getShopList} from "../utils/api"
 export default {
   data() {
     return {
+      selectShop: '',
       selectedRow:{},
+      shopNames: [],
+      shopIds: [],
       dialogFormVisible:false,
-      count:4,
+      total: 0,
+      limit: 20,
+      currentPage: 1,
       tableData: [{
         isShowHP: true,
         brand : "红星二锅头",
@@ -211,7 +234,8 @@ export default {
         title: '红星二锅头',
         degrees: '50',
         capacity:'300',
-      }]
+      }],
+
     }
   },
   computed: {
@@ -233,15 +257,48 @@ export default {
     handleDelete(index, row) {
       console.log(index, row)
     },
+
+    getShopNameById(id) {
+      for (let i = 0; i < this.shopIds.length; i++) {
+        if (this.shopIds[i] === id) {
+          return this.shopNames[i];
+        }
+      }
+    },
+    handleSizeChange(val) {
+      this.limit = val;
+      this.initData();
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.offset = (val - 1)*this.limit;
+      this.initData();
+    },
+    selectShopChanged(val) {
+      this.selectShop = val;
+      this.initData();
+    },
     async initData(){
 
       try {
-        const shopData = await getGoodList({offset: this.offset, limit: this.limit});
-        console.log(shopData.data.data)
+        const goodData = await getGoodList({offset: this.offset, limit: this.limit, shop_id: this.selectShop});
+        const shopData = await getShopList({offset:0, limit: 100})
         if (shopData.status === 200) {
+          this.shopNames = [];
+          this.shopIds = [];
+          shopData.data.data.forEach(item => {
+            item = JSON.parse(item);
+            this.shopNames.push(item.name);
+            this.shopIds.push(item._id)
+          });
+          console.log("shopData::200",this.shopNames)
+        }
+        console.log(goodData.data.data);
+        if (goodData.status === 200) {
           //this.count = shopData.data.data.length;
           this.tableData = []
-          shopData.data.data.forEach(item => {
+          goodData.data.data.forEach(item => {
             item=JSON.parse(item);
             console.log(item)
             const td = {};
@@ -263,8 +320,8 @@ export default {
             td.degrees= item.specification.split(',')[0],
             td.capacity=item.specification.split(',')[1],
             this.tableData.push(td);
-            console.log(td.mapData)
           })
+          console.log("GooodLIst:tableData::",this.tableData)
         }else{
           throw new Error('获取数据失败');
         }
@@ -322,5 +379,8 @@ export default {
   width: 120px;
   height: 120px;
   display: block;
+}
+.top-div {
+  border-width: 60px;
 }
 </style>

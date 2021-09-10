@@ -10,17 +10,28 @@
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
 
-            <el-form-item label="地址细节">
-              <span>{{ props.row.address.detail }}</span>
+            <el-form-item label="订单ID">
+              <span>{{ props.row.id }}</span>
             </el-form-item>
-            <el-form-item label="地址标签">
-              <span>{{ props.row.address.label }}</span>
+            <el-form-item label="地址">
+              <span>{{ getAddressString(props.row.address.region) }}</span>
+<!--              <template v-slot="scope">-->
+<!--                <el-breadcrumb separator-class="el-icon-arrow-right">-->
+<!--                  <el-breadcrumb-item v-for="(item, index) in props.row.address.region" :key="index">{{item}}</el-breadcrumb-item>-->
+<!--                </el-breadcrumb>-->
+<!--              </template>-->
             </el-form-item>
-            <el-form-item label="地址定位">
-              <span>{{ props.row.address.location.coordinates }}</span>
+            <el-form-item label="送货员">
+              <span>{{ props.row.deliveryMan }}</span>
             </el-form-item>
-            <el-form-item label="地区">
-              <span>{{ props.row.address.region }}</span>
+            <el-form-item label="派送费">
+              <span>{{ props.row.delivery_price }}</span>
+            </el-form-item>
+            <el-form-item label="打包费">
+              <span>{{ props.row.packingsPrice }}</span>
+            </el-form-item>
+            <el-form-item label="支付方式">
+              <span>{{ props.row.paymentChannels ==1 ? "线上支付" :"线下支付" }}</span>
             </el-form-item>
             <el-form-item label="商品列表">
 
@@ -37,11 +48,20 @@
       <el-table-column
           label="添加日期"
           sortable
-          prop="addTime">
-        <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">{{ getDateByTimestamp(scope.row.addTime.$date) }}</span>
+          >
+        <template v-slot="scope">
+          <el-popover  trigger="hover" placement="top">
+            <p v-if="scope.row.payTime">支付时间: {{ getDateByTimestamp(scope.row.payTime.$date) }}</p>
+            <p v-if="scope.row.achieveTime">送达时间: {{ getDateByTimestamp(scope.row.achieveTime.$date) }}</p>
+            <div slot="reference" class="name-wrapper">
+              <el-tag size="medium">{{getDateByTimestamp(scope.row.addTime.$date) }}</el-tag>
+            </div>
+          </el-popover>
         </template>
+<!--        <template slot-scope="scope">-->
+<!--          <i class="el-icon-time"></i>-->
+<!--          <span style="margin-left: 10px">{{ getDateByTimestamp(scope.row.addTime.$date) }}</span>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column
           label="标题"
@@ -101,14 +121,25 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="Pagination">
+<!--    <div class="Pagination">-->
+<!--      <el-pagination-->
+<!--          @size-change="handleSizeChange"-->
+<!--          @current-change="handleCurrentChange"-->
+<!--          :current-page="currentPage"-->
+<!--          :page-size="20"-->
+<!--          layout="total, prev, pager, next"-->
+<!--          :total="count">-->
+<!--      </el-pagination>-->
+<!--    </div>-->
+    <div class="block">
       <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="20"
-          layout="total, prev, pager, next"
-          :total="count">
+          :current-page.sync="currentPage"
+          :page-size="limit"
+          :page-sizes="[20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
       </el-pagination>
     </div>
 
@@ -125,6 +156,7 @@ export default {
       offset: 0,
       needStatus: [],
       limit : 20,
+      total: 0,
       selectedRow:{},
       currentPage: 1,
       orderStatusDic: {
@@ -147,18 +179,23 @@ export default {
       const Y = date.getFullYear() + '-';
       const M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
       const D = date.getDate() + ' ';
-      return (Y + M + D);
+      const h = date.getHours() + ':';
+      const m = date.getMinutes() + ':';
+      const s = date.getSeconds();
+      return (Y + M + D + h + m + s);
     },
     refunds() {
       console.log("将跳转至退款界面");
     },
     handleSizeChange(val) {
+      this.limit = val;
+      this.initData();
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
       this.currentPage = val;
       this.offset = (val - 1)*this.limit;
-      this.getInitialData();
+      this.initData();
     },
     async initData() {
       this.tableData = []
@@ -175,11 +212,15 @@ export default {
       const res = res_data.data   //由JSON字符串转化为JSON对象
         try {
         if (res.errcode === 0) {
+          this.total = res.pager.Total;
+
+          console.log("总数是：",this.total);
           // this.tableData = res.data
           res.data.forEach(item =>{
             // const td = {}
             item = JSON.parse(item);
-            this.tableData.push(item)
+            this.tableData.push(item);
+            // console.log("获取结果很顺利，其中")
           })
         } else {
           this.$message({
@@ -245,6 +286,14 @@ export default {
       console.log("newGoods"+newGoods)
       return newGoods;
     },
+    getAddressString(region) {
+      console.log(region)
+      let res = '';
+      for (var i=0; i<region.length; i++) {
+        res=res + region[i];
+      }
+      return res;
+    }
 
 
   },

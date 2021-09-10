@@ -10,7 +10,7 @@ export const logout = () => http.post('/user/logout');
 
 export const addGoods = data => http.post('/api/createWine',data);
 
-export const getGoodList = () => http.get('/api/getAllWines');
+export const getGoodList = data => http.get('/api/getAllWines',data);
 
 export const deletePic = data => http.get('/api/deletePic',data);
 

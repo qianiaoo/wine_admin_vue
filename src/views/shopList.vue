@@ -147,7 +147,6 @@ export default {
         const shopData = await getShopList({offset: this.offset, limit: this.limit});
         console.log(shopData.data.data)
         if (shopData.status === 200) {
-          //this.count = shopData.data.data.length;
           this.tableData = []
           shopData.data.data.forEach(item => {
             item=JSON.parse(item);

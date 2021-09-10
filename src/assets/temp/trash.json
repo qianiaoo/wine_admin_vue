@@ -1,45 +1,179 @@
 {
-  "_id": "cd045e756135a3620b1fdb575e85c5fa",
-  "addTime": "2021-09-06T05:13:04.907Z",
-  "address": {
-    "_id": "cd045e756133553e0abda99e007a395b",
-    "default": true,
-    "detail": "132",
-    "distance": 0.23719653940882962,
-    "label": "家",
-    "location": {
-      "coordinates": [
-        114.302165,
-        30.590161
+  "errcode": 0,
+  "errmsg": "ok",
+  "pager": {
+    "Offset": 0,
+    "Limit": 20,
+    "Total": 5
+  },
+  "data": [
+    {
+      "_id": "8937eaa961332b2308b45f44430ddd0e",
+      "address": "\u6b66\u6c49\u5e02\u6b66\u6c49\u5927\u5b66",
+      "category": [
+        "\u53ef\u4e50",
+        "\u70b8\u9e21"
       ],
-      "type": "Point"
+      "freight": [
+        {
+          "cny": 3,
+          "km": 1
+        },
+        {
+          "cny": 5,
+          "km": 2
+        },
+        {
+          "cny": 7,
+          "km": 3
+        },
+        {
+          "cny": 9,
+          "km": 4
+        }
+      ],
+      "location": {
+        "coordinates": [
+          116.3949659,
+          39.9163447
+        ],
+        "type": "Point"
+      },
+      "name": "\u5564\u9152\u53ef\u4e50",
+      "postRange": 19
     },
-    "phone": "1732222222",
-    "receiver": "ding",
-    "region": [
-      "湖北省",
-      "武汉市",
-      "江岸区"
-    ],
-    "title": "桃源公寓",
-    "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-  },
-  "delivery_price": 5,
-  "discount": 2,
-  "goods": {
-    "79550af260fb6de22905a79f046fe0c9": {
-      "normal": 2,
-      "num": 2
+    {
+      "_id": "8937eaa961332b5808b4657835d39257",
+      "address": "\u6b66\u6c49\u5e02",
+      "category": [
+        "\u5564\u9152",
+        "\u767d\u9152",
+        "\u8461\u8404\u9152",
+        "\u6d0b\u9152"
+      ],
+      "freight": [
+        {
+          "cny": 2,
+          "km": 0
+        },
+        {
+          "cny": 10,
+          "km": 5
+        },
+        {
+          "cny": 20,
+          "km": 15
+        }
+      ],
+      "location": {
+        "coordinates": [
+          114.304316,
+          30.5914
+        ],
+        "type": "Point"
+      },
+      "name": "\u95ef\u5c60\u592b\u732a\u8089\u5e97",
+      "postRange": 8000
     },
-    "cbddf0af60fb6e8119051b276dd45d4f": {
-      "normal": 2,
-      "num": 2
+    {
+      "_id": "cd045e756138a5380c1f9d6a53a85e72",
+      "address": "\u6e56\u5317\u7701\u6b66\u6c49\u5e02\u6c49\u9633\u533a\u5efa\u6865\u8857\u9053\u5f52\u5143\u5bfa\u5357\u8def\u5f52\u5143\u7985\u5bfa(\u6682\u505c\u8425\u4e1a)",
+      "category": [
+        "1",
+        "2",
+        "3"
+      ],
+      "freight": [
+        {
+          "cny": 3,
+          "km": 1
+        },
+        {
+          "cny": 5,
+          "km": 2
+        },
+        {
+          "cny": 7,
+          "km": 3
+        }
+      ],
+      "location": {
+        "coordinates": [
+          114.258004,
+          30.543736
+        ],
+        "type": "Point"
+      },
+      "name": "wrr",
+      "postRange": 15
+    },
+    {
+      "_id": "14139e126138bdac0ae0f77f2d2a7857",
+      "address": "\u6cb3\u5357\u7701\u90d1\u5dde\u5e02\u65b0\u90d1\u5e02\u9f99\u6e56\u9547\u654f\u884c\u73af\u8def\u6cb3\u5357\u5de5\u7a0b\u5b66\u9662\u9f99\u6e56\u6821\u533a\u5357\u533a",
+      "category": [
+        "\u767d\u9152",
+        "\u5564\u9152",
+        "\u72d7\u5c4e"
+      ],
+      "freight": [
+        {
+          "cny": 3,
+          "km": 1
+        },
+        {
+          "cny": 5,
+          "km": 2
+        },
+        {
+          "cny": 7,
+          "km": 3
+        },
+        {
+          "cny": 9,
+          "km": 4
+        }
+      ],
+      "location": {
+        "coordinates": [
+          113.700787,
+          34.616664
+        ],
+        "type": "Point"
+      },
+      "name": "\u521b\u4e1a\u6d4b\u8bd5\u5e97",
+      "postRange": 800
+    },
+    {
+      "_id": "14139e126138ee3e0ae8876a1477a97e",
+      "address": "\u6e56\u5317\u7701\u6b66\u6c49\u5e02\u6d2a\u5c71\u533a\u73de\u5357\u8857\u9053\u6b66\u6c49\u5927\u5b66\u4fe1\u606f\u5b66\u90e8",
+      "category": [
+        "1",
+        "2",
+        "3"
+      ],
+      "freight": [
+        {
+          "cny": 3,
+          "km": 1
+        },
+        {
+          "cny": 5,
+          "km": 2
+        },
+        {
+          "cny": 7,
+          "km": 3
+        }
+      ],
+      "location": {
+        "coordinates": [
+          114.35997,
+          30.52786
+        ],
+        "type": "Point"
+      },
+      "name": "test",
+      "postRange": 15
     }
-  },
-  "id": "20210906131304502638",
-  "money": 43033,
-  "packingsPrice": 30,
-  "paymentChannels": 0,
-  "status": 6,
-  "userId": "ojVpU5XXun_ZlsmtOJKIJktiTNjc"
-},
+  ]
+}
