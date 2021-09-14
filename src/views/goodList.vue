@@ -43,28 +43,28 @@
               <span>{{ props.row.pic_array }}</span>
             </el-form-item>
             <el-form-item label="售价">
-              <span>{{ props.row.price}}</span>
+              <span>{{ props.row.price }}</span>
             </el-form-item>
             <el-form-item label="销售量">
-              <span>{{ props.row.sale_count}}</span>
+              <span>{{ props.row.sale_count }}</span>
             </el-form-item>
             <el-form-item label="店铺名">
-              <span>{{ props.row.shop}}</span>
+              <span>{{ props.row.shop }}</span>
             </el-form-item>
             <el-form-item label="库存">
-              <span>{{ props.row.stock}}</span>
+              <span>{{ props.row.stock }}</span>
             </el-form-item>
             <el-form-item label="封面图片">
-              <span>{{ props.row.thumb_url}}</span>
+              <span>{{ props.row.thumb_url }}</span>
             </el-form-item>
             <el-form-item label="标题">
-              <span>{{ props.row.title}}</span>
+              <span>{{ props.row.title }}</span>
             </el-form-item>
             <el-form-item label="度数">
-              <span>{{ props.row.degrees}}</span>
+              <span>{{ props.row.degrees }}</span>
             </el-form-item>
             <el-form-item label="容量">
-              <span>{{ props.row.capacity}}</span>
+              <span>{{ props.row.capacity }}</span>
             </el-form-item>
 
 
@@ -82,49 +82,53 @@
       <el-table-column
           sortable
           prop="stock"
-          label="库存"  >
-        <template slot-scope="scope" >
-          <el-input-number size="mini" v-model="scope.row.stock"></el-input-number>
+          label="库存">
+        <template slot-scope="scope">
+          <el-input @blur="updateStock(scope.row.stock, scope.row._id)" oninput="value=value.replace(/[^\d]/g,'')"
+                    size="mini" style="width: 160px" v-model="scope.row.stock"></el-input>
         </template>
       </el-table-column>
       <el-table-column
           sortable
           prop="isShowHP"
-          label="首页推荐"  >
-        <template slot-scope="scope" >
+          label="首页推荐">
+        <template slot-scope="scope">
           <el-switch v-model="scope.row.isShowHP"></el-switch>
         </template>
       </el-table-column>
       <el-table-column
           label="店铺名">
         <template v-slot="scope">
-          <span>{{getShopNameById(scope.row.shop)}}</span>
+          <span>{{ getShopNameById(scope.row.shop) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button
               size="small"
-              @click="handleEdit(scope.row)">编辑</el-button>
+              @click="handleEdit(scope.row)">编辑
+          </el-button>
           <el-button
               size="small"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              @click="handleDelete(scope.$index, scope.row)">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div class="Pagination">
+    <div class="block">
       <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="20"
-          layout="total, prev, pager, next"
+          :current-page.sync="currentPage"
+          :page-size="limit"
+          :page-sizes="[20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="total">
       </el-pagination>
     </div>
-    <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
-      <editGoodForm :formModel="selectedRow"> </editGoodForm>
+    <el-dialog title="修改商品信息" :visible.sync="dialogFormVisible">
+      <editGoodForm @updateSuccess="this.updateSuccess" :formModel="selectedRow"></editGoodForm>
     </el-dialog>
 
   </div>
@@ -134,10 +138,12 @@
 .demo-table-expand {
   font-size: 0;
 }
+
 .demo-table-expand label {
   width: 90px;
   color: #99a9bf;
 }
+
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
@@ -150,102 +156,29 @@
 <script>
 import editGoodForm from "../components/editGoodForm";
 import headTop from "../components/headTop";
-import {getGoodList, getShopList} from "../utils/api"
+import {getGoodList, getShopList, updateStock} from "../utils/api"
+
 export default {
   data() {
     return {
       selectShop: '',
-      selectedRow:{},
+      selectedRow: {},
       shopNames: [],
       shopIds: [],
-      dialogFormVisible:false,
+      dialogFormVisible: false,
       total: 0,
       limit: 20,
       currentPage: 1,
-      tableData: [{
-        isShowHP: true,
-        brand : "红星二锅头",
-        category_name: "白酒",
-        item: '二锅头',
-        marketPrice: '50',
-        origin: '北京',
-        packingsPrice: '4',
-        pic_array: [],
-        price: '30',
-        sale_count: '22',
-        shop: '王府井店',
-        stock: '1',
-        thumb_url: '',
-        title: '红星二锅头',
-        degrees: '50',
-        capacity:'300',
-
-      }, {
-        isShowHP: true,
-
-        brand : "红星二锅头",
-        category_name: "白酒",
-        item: '二锅头',
-        marketPrice: '50',
-        origin: '北京',
-        packingsPrice: '4',
-        pic_array: [],
-        price: '30',
-        sale_count: '22',
-        shop: '王府井店',
-        stock: '111',
-        thumb_url: '',
-        title: '红星二锅头',
-        degrees: '50',
-        capacity:'300',
-      }, {
-        isShowHP: true,
-
-        brand : "红星二锅头",
-        category_name: "白酒",
-        item: '二锅头',
-        marketPrice: '50',
-        origin: '北京',
-        packingsPrice: '4',
-        pic_array: [],
-        price: '30',
-        sale_count: '22',
-        shop: '王府井店',
-        stock: '122',
-        thumb_url: '',
-        title: '红星二锅头',
-        degrees: '50',
-        capacity:'300',
-      }, {
-        isShowHP: false,
-
-        brand : "红星二锅头",
-        category_name: "白酒",
-        item: '二锅头',
-        marketPrice: '50',
-        origin: '北京',
-        packingsPrice: '4',
-        pic_array: [],
-        price: '30',
-        sale_count: '22',
-        shop: '王府井店',
-        stock: '100',
-        thumb_url: '',
-        title: '红星二锅头',
-        degrees: '50',
-        capacity:'300',
-      }],
+      tableData: [],
 
     }
   },
-  computed: {
-
-  },
+  computed: {},
   components: {
     headTop,
     editGoodForm
   },
-   created() {
+  created() {
     this.initData();
   },
   methods: {
@@ -272,18 +205,34 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.offset = (val - 1)*this.limit;
+      this.offset = (val - 1) * this.limit;
       this.initData();
     },
     selectShopChanged(val) {
       this.selectShop = val;
+      console.log("val:::", val);
+      console.log("selsectShop:", this.selectShop);
+      console.log("t")
       this.initData();
     },
-    async initData(){
+    async updateStock(stock, id) {
+      const res = await updateStock({_id: id, stock: stock})
+      if (res.status === 200) {
+        this.$message({
+          type: "success",
+          message: '修改库存成功！'
+        });
+      }
+    },
+    updateSuccess() {
+      this.dialogFormVisible = false;
+      this.initData();
+    },
+    async initData() {
 
       try {
         const goodData = await getGoodList({offset: this.offset, limit: this.limit, shop_id: this.selectShop});
-        const shopData = await getShopList({offset:0, limit: 100})
+        const shopData = await getShopList({offset: 0, limit: 100})
         if (shopData.status === 200) {
           this.shopNames = [];
           this.shopIds = [];
@@ -292,37 +241,40 @@ export default {
             this.shopNames.push(item.name);
             this.shopIds.push(item._id)
           });
-          console.log("shopData::200",this.shopNames)
+          console.log("shopData::200", this.shopNames)
         }
         console.log(goodData.data.data);
         if (goodData.status === 200) {
+          this.total = goodData.data.pager.Total;
+
           //this.count = shopData.data.data.length;
           this.tableData = []
           goodData.data.data.forEach(item => {
-            item=JSON.parse(item);
+            item = JSON.parse(item);
             console.log(item)
             const td = {};
-            td.isShowHP=item.recommend,
-            td.brand=item.brand,
-            td.category_name= item.category_name,
-            td.item= item.item,
-            td.marketPrice= item.marketPrice,
-            td.origin= item.origin,
-            td.packingsPrice= item.packingsPrice,
-            td.pic_array1= item.pic_array,
-            td.pic_array2= item.product_desc_url,
-            td.price= item.price,
-            td.sale_count= item.sale_count,
-            td.shop= item.shop,
-            td.stock= item.stock,
-            td.thumb_url= item.thumb_url,
-            td.title= item.title,
-            td.degrees= item.specification.split(',')[0],
-            td.capacity=item.specification.split(',')[1],
+            td.isShowHP = item.recommend;
+            td._id = item._id;
+            td.brand = item.brand,
+                td.category_name = item.category_name,
+                td.item = item.item,
+                td.marketPrice = item.marketPrice,
+                td.origin = item.origin,
+                td.packingsPrice = item.packingsPrice,
+                td.pic_array1 = item.pic_array,
+                td.pic_array2 = item.product_desc_url,
+                td.price = item.price,
+                td.sale_count = item.sale_count,
+                td.shop = item.shop,
+                td.stock = item.stock;
+            td.thumb_url = item.thumb_url;
+            td.title = item.title;
+            td.degrees = item.specification.split(',')[0];
+            td.capacity = item.specification.split(',')[1];
             this.tableData.push(td);
           })
-          console.log("GooodLIst:tableData::",this.tableData)
-        }else{
+          console.log("GooodLIst:tableData::", this.tableData)
+        } else {
           throw new Error('获取数据失败');
         }
 
@@ -337,26 +289,32 @@ export default {
 
 <style lang="less">
 @import '../style/mixin';
+
 .demo-table-expand {
   font-size: 0;
 }
+
 .demo-table-expand label {
   width: 90px;
   color: #99a9bf;
 }
+
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
   width: 30%;
 }
-.table_container{
+
+.table_container {
   padding: 20px;
 }
-.Pagination{
+
+.Pagination {
   display: flex;
   justify-content: flex-start;
   margin-top: 8px;
 }
+
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -364,9 +322,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #20a0ff;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -375,11 +335,13 @@ export default {
   line-height: 120px;
   text-align: center;
 }
+
 .avatar {
   width: 120px;
   height: 120px;
   display: block;
 }
+
 .top-div {
   border-width: 60px;
 }

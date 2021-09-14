@@ -58,14 +58,15 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="Pagination">
+    <div class="block">
       <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="20"
-          layout="total, prev, pager, next"
-          :total="count">
+          :current-page.sync="currentPage"
+          :page-size="limit"
+          :page-sizes="[20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
       </el-pagination>
     </div>
     <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
@@ -84,53 +85,14 @@ export default {
   name: "shopList",
   data() {
     return {
-      count : 0,
+      total : 0,
       offset: 0,
       limit : 20,
       dialogFormVisible:false,
       search:'',
       selectedRow:{},
       currentPage: 1,
-      tableData: [{
-        id: '1',
-        name: '十八里河店',
-        category: [],
-        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
-        freight: [
-          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
-        ],
-        max_range: 15
-      }, {
-        id: '2',
-        name: '二七区分店',
-        category: [],
-
-        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
-        freight: [
-          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
-        ],
-        max_range: 20
-      }, {
-        id: '2',
-        name: '广岛分店',
-        category: [],
-
-        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
-        freight: [
-          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
-        ],
-        max_range: 33
-      }, {
-        id: '3',
-        name: '大阪店',
-        category: [],
-
-        mapData: [[116.393916, 39.913491], '上海市普陀区金沙江路 1518 弄'],
-        freight: [
-          {km:1,cny:3}, {km:2,cny:3}, {km:3,cny:5}
-        ],
-        max_range: 55
-      }]
+      tableData: []
     }
   },
   components: {
@@ -148,6 +110,7 @@ export default {
         console.log(shopData.data.data)
         if (shopData.status === 200) {
           this.tableData = []
+          this.total = shopData.data.pager.Total;
           shopData.data.data.forEach(item => {
             item=JSON.parse(item);
             const td = {};

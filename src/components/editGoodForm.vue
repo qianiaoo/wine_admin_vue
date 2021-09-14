@@ -36,13 +36,16 @@
       <el-input v-model="formModel.item"></el-input>
     </el-form-item>
     <el-form-item label="店铺名" prop="shop">
-      <el-input v-model="formModel.shop"></el-input>
-    </el-form-item>
-    <el-form-item label="度数">
-      <el-input v-model="formModel.degrees" placeholder="酒精度数"></el-input>
-    </el-form-item>
-    <el-form-item label="容量">
-      <el-input v-model="formModel.capacity" placeholder="容量"></el-input>
+      <el-select v-model="formModel.shop" @change="selectShopChanged" filterable placeholder="请选择">
+        <el-option
+            v-for="(item, index) in shopNames"
+            :key="shopIds[index]"
+            :label="item"
+            :value="shopIds[index]">
+        </el-option>
+      </el-select>    </el-form-item>
+    <el-form-item label="描述">
+      <el-input v-model="formModel.description" placeholder="请输入酒精度数和容量等描述"></el-input>
     </el-form-item>
     <el-form-item label="库存">
       <el-input v-model="formModel.stock" placeholder="库存数量"></el-input>
@@ -53,12 +56,29 @@
     <el-form-item label="上传图片列表">
       <el-upload
           accept="image/jpeg,image/gif,image/png"
-          :action="baseUrl+'/api/uploadpics'"
+          :action="baseUrl+'/api/uploadpics?shop_id='+formModel.shop"
           :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :on-success="uploadSuccess"
+          :on-remove="handleRemove1"
+          :on-success="uploadSuccess1"
 
-          :file-list="formModel.pic_array"
+          :file-list="picList1"
+          list-type="picture"
+          :before-upload="onBeforeUpload"
+          multiple>
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">请上传图片格式文件</div>
+
+      </el-upload>
+    </el-form-item>
+    <el-form-item label="上传图片列表2">
+      <el-upload
+          accept="image/jpeg,image/gif,image/png"
+          :action="baseUrl+'/api/uploadpics?shop_id='+formModel.shop"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove2"
+          :on-success="uploadSuccess2"
+
+          :file-list="picList2"
           list-type="picture"
           :before-upload="onBeforeUpload"
           multiple>
@@ -71,26 +91,206 @@
     <el-form-item label="上传封面">
       <el-upload
           class="avatar-uploader"
-          :action="baseUrl + '/v1/addimg/food'"
+          :action="baseUrl + '/api/uploadpics'"
           :show-file-list="false"
+          :on-remove="handleRemove"
           :on-success="uploadImg"
           :before-upload="beforeImgUpload">
-        <img v-if="formModel.thumb_url" :src="baseImgPath + formModel.thumb_url" class="avatar">
+        <img v-if="thumbPic" :src="thumbPic" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
 
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">立即创建</el-button>
-      <el-button>取消</el-button>
+      <el-button type="primary" @click="onSubmit">立即修改</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+import {addGoods, getShopList, shopPic} from "../utils/api";
+
+const {baseUrl} = require("../utils/api");
+
 export default {
   name: "editGoodForm",
-  props: ['formModel']
+  props: ['formModel'],
+  data() {
+    return{
+      picList1: [],
+      shopNames: [],
+      shopIds: [],
+      thumbPic:'',
+      picList2: [],
+      baseUrl
+    }
+  },
+  methods: {
+    handlePreview(file) {
+      console.log(file)
+    },
+    async onSubmit() {
+      try {
+        const res = await addGoods(JSON.stringify(this.formModel));
+        console.log(res)
+        if (res.data.errcode === 0) {
+          this.$message({
+            type: 'success',
+            message: '更新店铺信息成功'
+          });
+          this.$emit("updateSuccess");
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    handleRemove1(file) {
+      console.log("remove::",file)
+      for(var i=0;i<this.picList1.length;i++){
+        if(this.picList1[i].name===file.name){
+          this.picList1[i]=null
+          this.formModel.pic_array1[i] = null;
+          this.picList1=this.picList1.filter(n => n)
+          break
+        }
+      }
+      console.log(this.picList1)
+    },
+    handleRemove2(file) {
+      console.log("remove::",file)
+
+      //deletePic({pic:file.response.name})
+      for(var i=0;i<this.picList2.length;i++){
+        if(this.picList2[i].name===file.name){
+          this.picList2[i]=null
+          this.formModel.pic_array2 = null;
+          this.picList2=this.picList2.filter(n => n)
+          break
+        }
+      }
+      console.log(this.picList2)
+    },
+    handleRemove(file){
+      //deletePic({pic:file.response.name})
+      console.log(file)
+      this.formModel.thumb_url=""
+    },
+
+    getPicParam(arr) {
+      let picarrParam = "";
+      arr.forEach(item => {
+        picarrParam += item + ',';
+      })
+      return picarrParam.substr(0, picarrParam.length - 1);
+    },
+    async initPic() {
+      if (this.formModel.pic_array1) {
+        const res = await shopPic({pic: this.getPicParam(this.formModel.pic_array1)})
+        for (const item of res.data.file_list) {
+          const filename = item.fileid.split('/').pop()
+
+          const picUrl = await shopPic({pic: item.fileid})
+
+          this.picList1.push({name: filename, url: picUrl.data.file_list[0].download_url})
+        }
+      }
+      if (this.formModel.pic_array2) {
+        const res = await shopPic({pic: this.getPicParam(this.formModel.pic_array2)})
+        for (const item of res.data.file_list) {
+          const filename = item.fileid.split('/').pop()
+
+          const picUrl = await shopPic({pic: item.fileid})
+
+          this.picList2.push({name: filename, url: picUrl.data.file_list[0].download_url})
+        }
+      }
+      if (this.formModel.thumb_url) {
+        const res = await shopPic({pic: this.formModel.thumb_url})
+        this.thumbPic = res.data.file_list[0].download_url;
+        console.log("存在封面", this.thumbPic);
+      }
+    },
+    getShopNameById(id) {
+      for (let i = 0; i < this.shopIds.length; i++) {
+        if (this.shopIds[i] === id) {
+          return this.shopNames[i];
+        }
+      }
+    },
+    async uploadSuccess1(file) {
+      const filename = file['name'].split('/').pop()
+      this.formModel.pic_array1.push(file['name'])
+      const picUrl = await shopPic({pic: file['name']})
+
+      this.picList1.push({name: filename, url: picUrl.data.file_list[0].download_url})
+      console.log("uploadSuccess1", this.picList1);
+    },
+    async uploadSuccess2(file) {
+      console.log(file)
+      const filename = file['name'].split('/').pop()
+      const picUrl = await shopPic({pic: file['name']})
+
+      this.formModel.pic_array2.push(file['name'])
+      this.picList2.push({name: filename, url: picUrl.data.file_list[0].download_url})
+
+    },
+    beforeImgUpload(){
+
+    },
+    onBeforeUpload(file) {
+      const isIMAGE = file.type === 'image/jpeg'||'image/gif'||'image/png';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isIMAGE) {
+        this.$message.error('上传文件只能是图片格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 2MB!');
+      }
+      return isIMAGE && isLt2M;
+    },
+    selectShopChanged(val) {
+      this.form.shop = val;
+      console.log("selsectShop:", this.form.shop);
+    },
+    async uploadImg(file) {
+      console.log("上传成功后的file::", file);
+      console.log("上传成功后的thumbUrl::", this.form.thumb_url);
+      const res = await shopPic({pic: file['name']});
+      if (res.status === 200) {
+        console.log("上传成功后，转换成功后的res", res);
+        this.thumbPic = res.data.file_list[0].download_url;
+        this.form.thumb_url = file['name'];
+        console.log("上传成功后，图片URL：",this.form.thumb_url);
+      }
+
+
+    },
+    async initShopData() {
+      const shopData = await getShopList({offset: 0, limit: 100})
+      if (shopData.status === 200) {
+        this.shopNames = [];
+        this.shopIds = [];
+        shopData.data.data.forEach(item => {
+          item = JSON.parse(item);
+          this.shopNames.push(item.name);
+          this.shopIds.push(item._id)
+        });
+        console.log("shopData::200", this.shopNames)
+      }
+    },
+
+  },
+
+  created() {
+    this.initShopData();
+    this.initPic();
+  }
 }
 </script>
 

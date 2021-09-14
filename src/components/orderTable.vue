@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import {getOrderList, updateOrder} from "../utils/api";
+import {getOrderList, refuseOrder, updateOrder} from "../utils/api";
 
 export default {
   name: "orderTable",
@@ -184,7 +184,9 @@ export default {
       const s = date.getSeconds();
       return (Y + M + D + h + m + s);
     },
-    refunds() {
+    async refunds() {
+      const res = await refuseOrder({_id: this._id})
+      console.log(res);
       console.log("将跳转至退款界面");
     },
     handleSizeChange(val) {
@@ -243,8 +245,9 @@ export default {
 
     },
     handleUpdateRes(res) {
+      this.initData();
       try {
-        if (res.status === 1) {
+        if (res.status === 200) {
           this.$message({
             type: 'success',
             message: '更新订单状态成功'

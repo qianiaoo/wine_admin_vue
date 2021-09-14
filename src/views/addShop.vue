@@ -159,7 +159,7 @@ export default {
       console.log({data:this.form})
       try {
         this.form.freight=this.form.tableData
-        this.form.category='1,2,3,4'
+        // this.form.category='1,2,3,4'
         const res = await updateShop(JSON.stringify(this.form));
         console.log(res)
         if (res.data.errcode === 0) {

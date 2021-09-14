@@ -57,8 +57,8 @@
           <el-form-item label="店铺坐标">
             <el-button type="primary" @click="openMap" plain>打开地图</el-button>
             <div >
-              <p v-if="form.location.coordinates" >坐标: {{form.location.coordinates}}</p>
-              <p v-if="form.address">地址: {{form.address}}</p>
+              <p v-if="form.mapData[0]" >坐标: {{form.mapData[0]}}</p>
+              <p v-if="form.mapData[1]">地址: {{form.mapData[1]}}</p>
             </div>
 <!--            <get-map :parentFunc="this.getMapData" ></get-map>-->
 <!--            <get-map @backMapData="getMapData"></get-map>-->
@@ -70,7 +70,7 @@
         </el-form>
     <el-dialog style="height: 120%" title="选择地点" :visible.sync="isShowMapDialog" append-to-body>
       <p>{{form.address}}</p>
-      <get-map :parentFunc="this.getMapData" :new-center="form.location.coordinates"></get-map>
+      <get-map :parentFunc="this.getMapData" :new-center="form.mapData[0]"></get-map>
     </el-dialog>
   </div>
 </template>
@@ -114,7 +114,7 @@ export default {
       this.isShowMapDialog = true
     },
     getMapData(mapData) {
-      this.form.location.coordinates = mapData[0]
+      this.form.mapData[0] = mapData[0];
       this.form.address = mapData[1];
       this.isShowMapDialog = false
     },

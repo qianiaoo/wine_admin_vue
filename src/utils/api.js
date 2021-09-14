@@ -18,12 +18,17 @@ export const getShopList = data => http.get("/api/getShops", data);
 
 export const getOrderList = data => http.get("/api/getOrders", data);
 
+export const updateStock = data => http.get("/api/changeStocks", data);
 
 export const addShop = data => http.post('/api/createShop', data);
 
-export const updateOrder = data => http.post('/api/updateOrder', data);
+export const shopPic = data => http.get('/api/showPic', data);
+
+export const updateOrder = data => http.post('/api/updateStatus', data);
 
 export const updateShop = data => http.post('/api/updateShop', data);
+
+export const refuseOrder = data => http.get('/api/refuseOrder', data);
 
 export const mapKey = 'f07e24eacb9f7469412cc14de883d683'
 
