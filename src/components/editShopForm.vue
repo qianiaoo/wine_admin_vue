@@ -4,7 +4,7 @@
           <el-form-item label="店铺名" prop="name">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
-          <el-form-item label="分类标签">
+          <el-form-item label="分类标签" prop="category">
             <el-tag
                 v-for="tag in form.category"
                 :key="tag"
@@ -87,6 +87,10 @@ export default {
       inputValue:'',
       inputVisible: false,
       isShowMapDialog:false,
+      rules: {
+        name: [{required: true, message: '请输入店铺名', trigger: 'blur'}],
+        category: [{required: true, message: '请输入至少一个分类', trigger: 'blur'}],
+      },
 
     }
   },
@@ -150,8 +154,16 @@ export default {
       this.form.category.splice(this.form.category.indexOf(tag), 1);
     },
     async updateShop() {
-      console.log({data:this.form})
+      if (this.form.category.length <= 0) {
+        this.$message({
+          type: "error",
+          message:"请至少输入一个分类标签"
+        })
+        return;
+      }
+      console.log("updateShop::::",{data:this.form})
       try {
+        this.form._id = this.form.id;
         const res = await updateShop(JSON.stringify(this.form));
         console.log(res)
         if (res.data.errcode === 0) {

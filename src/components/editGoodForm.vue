@@ -44,13 +44,13 @@
             :value="shopIds[index]">
         </el-option>
       </el-select>    </el-form-item>
-    <el-form-item label="描述">
+    <el-form-item label="描述" prop="description">
       <el-input v-model="formModel.description" placeholder="请输入酒精度数和容量等描述"></el-input>
     </el-form-item>
-    <el-form-item label="库存">
+    <el-form-item label="库存" prop="stock">
       <el-input v-model="formModel.stock" placeholder="库存数量"></el-input>
     </el-form-item>
-    <el-form-item label="标题">
+    <el-form-item label="标题" prop="title">
       <el-input v-model="formModel.title" placeholder="标题"></el-input>
     </el-form-item>
     <el-form-item label="上传图片列表">
@@ -122,7 +122,26 @@ export default {
       shopIds: [],
       thumbPic:'',
       picList2: [],
-      baseUrl
+      baseUrl,
+      rules: {
+        brand: [
+          { required: true, message: '请输入品牌名', trigger: 'blur' },
+        ],
+        category_name: [
+          { required: true, message: '请选择分类', trigger: 'blur' },
+        ],
+        price: [{required: true,  message: '请输入售价',trigger: 'blur'}],
+        packingsPrice: [{required: true,  message: '请输入批发价', trigger: 'blur'}],
+        marketPrice: [{required: true, message: '请输入市场价', trigger: 'blur'}],
+        origin: [{required: true, message: '请输入原产地', trigger: 'blur'}],
+        item: [{required: true, message: '请输入商品名', trigger: 'blur'}],
+        description: [{required: true, message: '请输入度数及容量描述', trigger: 'blur'}],
+        stock: [{required: true, message: '请输入库存', trigger: 'blur'}],
+        title: [{required: true, message: '请输入标题', trigger: 'blur'}],
+        shop: [{required: true, message: '请选择店铺', trigger: 'blur'}],
+
+
+      },
     }
   },
   methods: {

@@ -2,7 +2,7 @@
   <div class="header_container">
 
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: '/manage' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/manage' }">待接单列表</el-breadcrumb-item>
       <el-breadcrumb-item v-for="(item, index) in $route.meta" :key="index">{{item}}</el-breadcrumb-item>
     </el-breadcrumb>
     <el-button round :click="logout">登出</el-button>

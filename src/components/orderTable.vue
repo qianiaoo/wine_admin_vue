@@ -79,10 +79,10 @@
       </el-table-column>
       <el-table-column
           label="订单状态"
-          :filters="[{ text: '订单已完成', value: '1' },{ text: '正在配送', value: '2' },
-           { text: '商家已接单', value: '3' },{ text: '商家拒绝接单', value: '4' },
-           { text: '等待支付', value: '5' },{ text: '取消支付', value: '6' },{ text: '正在退款', value: '7' }
-           ,{ text: '支付完成', value: '8' },{ text: '支付取消', value: '9' }]"
+          :filters="[{ text: '订单已完成', value: 1 },{ text: '正在配送', value: 2 },
+           { text: '商家已接单', value: 3 },{ text: '商家拒绝接单', value: 4 },
+           { text: '等待支付', value: 5 },{ text: '取消支付', value: 6 },{ text: '正在退款', value: 7 }
+           ,{ text: '支付完成', value: 8 },{ text: '支付取消', value: 9 }]"
           :filter-method="filterTag"
           filter-placement="bottom-end">
         <template slot-scope="scope">
@@ -99,7 +99,7 @@
         </template>
       </el-table-column>
       <el-table-column
-          label="收货人"
+          label="收货人" align="left"
           prop="address.receiver">
       </el-table-column>
       <el-table-column label="操作"  align="center">
@@ -206,7 +206,7 @@ export default {
       const data = {
         offset: this.offset,
         limit: this.limit,
-        needStatus: needStatusStr,
+        status: needStatusStr,
       }
       const res_data = await getOrderList(data)
       // const res = res_data.parseJson();
@@ -296,6 +296,13 @@ export default {
         res=res + region[i];
       }
       return res;
+    },
+    initPreFilter() {
+      if (this.preStatus) {
+      console.log("initPRe::",this.preStatus);
+        this.needStatus = this.preStatus;
+      }
+
     }
 
 
@@ -308,10 +315,9 @@ export default {
       return this.tableData.length;
     }
   },
-  props: {
-
-  },
+  props: ['preStatus'],
   created() {
+    this.initPreFilter();
     this.initData();
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <head-top></head-top>
-    <h1>欢迎</h1>
+    <order-table :pre-status="8"></order-table>
 <!--    <section class="data_section">-->
 <!--      <header class="section_title">数据统计</header>-->
 <!--      <el-row :gutter="20" style="margin-bottom: 10px;">-->
@@ -23,6 +23,7 @@
 
 <script>
 import headTop from '../components/headTop'
+import orderTable from "../components/orderTable";
 // import tendency from '../components/tendency'
 // import dtime from 'time-formater'
 // import {userCount, orderCount, getUserCount, getOrderCount, adminDayCount, adminCount} from '@/api/getData'
@@ -41,6 +42,8 @@ export default {
   },
   components: {
     headTop,
+    orderTable,
+
     // tendency,
   },
   mounted(){

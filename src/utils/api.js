@@ -24,7 +24,7 @@ export const addShop = data => http.post('/api/createShop', data);
 
 export const shopPic = data => http.get('/api/showPic', data);
 
-export const updateOrder = data => http.post('/api/updateStatus', data);
+export const updateOrder = data => http.get('/api/updateStatus', data);
 
 export const updateShop = data => http.post('/api/updateShop', data);
 

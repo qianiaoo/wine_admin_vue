@@ -7,7 +7,7 @@
           <el-form-item label="店铺名" prop="name">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
-          <el-form-item label="分类标签">
+          <el-form-item label="分类标签" prop="category">
             <el-tag
                 v-for="tag in form.category"
                 :key="tag"
@@ -47,7 +47,7 @@
                   sortable
                   label="公里数">
                 <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.km" min="0" size="mini" :precision="1" :step="0.5" :max="form.max_range"></el-input-number>
+                  <el-input-number v-model="scope.row.km" :min="0" size="mini" :precision="1" :step="0.5" :max="form.max_range"></el-input-number>
                 </template>
               </el-table-column>
               <el-table-column
@@ -55,7 +55,7 @@
                   sortable
                   label="金额">
                 <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.cny" min="0" size="mini" :precision="1" :step="0.5" ></el-input-number>
+                  <el-input-number v-model="scope.row.cny" :min="0" size="mini" :precision="1" :step="0.5" ></el-input-number>
                 </template>
               </el-table-column>
             </el-table>
@@ -106,7 +106,11 @@ export default {
           km: 1,
           cny:3
         }],
-      }
+      },
+      rules: {
+        name: [{required: true, message: '请输入店铺名', trigger: 'blur'}],
+        category: [{required: true, message: '请输入至少一个分类', trigger: 'blur'}],
+      },
     }
   },
   components: {
@@ -156,7 +160,14 @@ export default {
     },
 
     async onSubmit(){
-      console.log({data:this.form})
+      console.log({data:this.form.category})
+      if (this.form.category.length <= 0) {
+        this.$message({
+          type: "error",
+          message:"请至少输入一个分类标签"
+        })
+        return;
+      }
       try {
         this.form.freight=this.form.tableData
         // this.form.category='1,2,3,4'
