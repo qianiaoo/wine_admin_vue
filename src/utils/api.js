@@ -20,6 +20,10 @@ export const getOrderList = data => http.get("/api/getOrders", data);
 
 export const updateStock = data => http.get("/api/changeStocks", data);
 
+export const getBill = () => http.get("/api/getBill")
+
+export const achieveBill = data => http.get("/api/achieveBill", data);
+
 export const addShop = data => http.post('/api/createShop', data);
 
 export const shopPic = data => http.get('/api/showPic', data);

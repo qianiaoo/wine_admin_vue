@@ -1,7 +1,12 @@
 <template>
   <div>
     <head-top></head-top>
-    <order-table></order-table>
+    <div class="top-div" style="padding-left: 20px; padding-top: 10px">
+      <template>
+        <el-checkbox v-model="needBill" @change="needBillChanged">显示需要开发票的订单</el-checkbox>
+      </template>
+    </div>
+    <order-table ref="orderTable"></order-table>
   </div>
 </template>
 
@@ -13,6 +18,7 @@ export default {
   name: "orderList",
   data() {
     return {
+      needBill: false
       // tableData: []
     }
   },
@@ -24,6 +30,13 @@ export default {
 
   },
   methods: {
+    needBillChanged() {
+      if (this.needBill) {
+        this.$ref.orderTable.getNeedBillOrders();
+      } else {
+        this.$ref.orderTable.initData();
+      }
+    }
     // async initData() {
     //
     // }

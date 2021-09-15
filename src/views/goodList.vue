@@ -1,7 +1,7 @@
 <template>
   <div>
     <headTop></headTop>
-    <div class="top-div">
+    <div class="top-div" style="padding-left: 30px;padding-top: 10px">
       <span>选择店铺：</span>
       <template>
         <el-select v-model="selectShop" @change="selectShopChanged" filterable placeholder="请选择">

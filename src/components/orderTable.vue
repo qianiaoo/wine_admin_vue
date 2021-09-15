@@ -111,6 +111,7 @@
           <el-button  v-if="scope.row.status===7" @click="refunds">退款</el-button>
           <el-button  v-if="scope.row.status===3" @click="orderChange(scope.row, 9)">取消订单</el-button>
           <el-button  v-if="scope.row.status===2" @click="orderChange(scope.row, 9)">取消订单</el-button>
+          <el-button  v-if="scope.row.bill===1&&scope.row.status===1" @click="invoicing(scope.row)">开发票</el-button>
           <!--          <el-button-->
           <!--              size="small"-->
           <!--              @click="handleEdit(scope.row)"></el-button>-->
@@ -121,7 +122,20 @@
         </template>
       </el-table-column>
     </el-table>
-<!--    <div class="Pagination">-->
+    <el-dialog
+        title="开发票"
+        :visible.sync="billDialogVisible"
+        width="30%">
+      <el-descriptions title="发票信息">
+        <el-descriptions-item label="抬头">{{ dialogHeader }}</el-descriptions-item>
+        <el-descriptions-item label="税号">{{  dialogTax  }}</el-descriptions-item>
+      </el-descriptions>      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="achieveBill">完成开票</el-button>
+  </span>
+    </el-dialog>
+
+    <!--    <div class="Pagination">-->
 <!--      <el-pagination-->
 <!--          @size-change="handleSizeChange"-->
 <!--          @current-change="handleCurrentChange"-->
@@ -147,7 +161,7 @@
 </template>
 
 <script>
-import {getOrderList, refuseOrder, updateOrder} from "../utils/api";
+import {achieveBill, getOrderList, refuseOrder, updateOrder} from "../utils/api";
 
 export default {
   name: "orderTable",
@@ -157,6 +171,10 @@ export default {
       needStatus: [],
       limit : 20,
       total: 0,
+      billDialogVisible: false,
+      dialogTax: '',
+      dialogOrderId: '',
+      dialogHeader: '',
       selectedRow:{},
       currentPage: 1,
       orderStatusDic: {
@@ -174,6 +192,15 @@ export default {
     }
   },
   methods: {
+    async achieveBill() {
+      const res = await achieveBill({_id: this.dialogOrderId})
+      if (res.status === 200) {
+        this.$message({
+          type: "success",
+          message: "完成开发票成功"
+        })
+      }
+    },
     getDateByTimestamp(timestamp) {
       const date = new Date(timestamp);
       const Y = date.getFullYear() + '-';
@@ -198,6 +225,40 @@ export default {
       this.currentPage = val;
       this.offset = (val - 1)*this.limit;
       this.initData();
+    },
+    async getNeedBillOrders() {
+      this.tableData = []
+      const data = {
+        offset: this.offset,
+        limit: this.limit,
+        bill: 1,
+
+      }
+      const res_data = await getOrderList(data)
+      // const res = res_data.parseJson();
+      console.log(res_data)
+      const res = res_data.data   //由JSON字符串转化为JSON对象
+      try {
+        if (res.errcode === 0) {
+          this.total = res.pager.Total;
+
+          console.log("总数是：", this.total);
+          // this.tableData = res.data
+          res.data.forEach(item => {
+            // const td = {}
+            item = JSON.parse(item);
+            this.tableData.push(item);
+            // console.log("获取结果很顺利，其中")
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      }
     },
     async initData() {
       this.tableData = []
@@ -273,6 +334,13 @@ export default {
     findGoodById(id) {
       console.log(id)
       return id;
+    },
+    invoicing(row) {
+      this.dialogOrderId = row._id
+      this.dialogHeader = row.header;
+      this.dialogTax = row.tax;
+      this.billDialogVisible = true;
+
     },
     getArrGoods(goods) {
       console.log("开始执行good转换")
