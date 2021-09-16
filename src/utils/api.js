@@ -16,7 +16,7 @@ export const deletePic = data => http.get('/api/deletePic',data);
 
 export const getShopList = data => http.get("/api/getShops", data);
 
-export const getOrderList = data => http.get("/api/getOrders", data);
+export const getOrderList = data => http.get("/api/getAllOrders", data);
 
 export const updateStock = data => http.get("/api/changeStocks", data);
 

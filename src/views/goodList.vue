@@ -16,6 +16,7 @@
     </div>
 
     <el-table
+        v-loading="loading"
         :data="tableData"
         style="width: 100%">
       <el-table-column type="expand">
@@ -161,6 +162,7 @@ import {getGoodList, getShopList, updateStock} from "../utils/api"
 export default {
   data() {
     return {
+      loading: false,
       selectShop: '',
       selectedRow: {},
       shopNames: [],
@@ -229,7 +231,7 @@ export default {
       this.initData();
     },
     async initData() {
-
+      this.loading = true;
       try {
         const goodData = await getGoodList({offset: this.offset, limit: this.limit, shop_id: this.selectShop});
         const shopData = await getShopList({offset: 0, limit: 100})
@@ -273,6 +275,7 @@ export default {
             td.capacity = item.specification.split(',')[1];
             this.tableData.push(td);
           })
+          this.loading = false;
           console.log("GooodLIst:tableData::", this.tableData)
         } else {
           throw new Error('获取数据失败');

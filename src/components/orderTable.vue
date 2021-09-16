@@ -2,7 +2,9 @@
   <div>
 
     <el-table
-            :data="tableData"
+        v-loading="loading"
+
+        :data="tableData"
             @filter-change="filterChange"
 
         style="width: 100%">
@@ -167,6 +169,7 @@ export default {
   name: "orderTable",
   data() {
     return {
+      loading: false,
       offset: 0,
       needStatus: [],
       limit : 20,
@@ -228,6 +231,7 @@ export default {
       this.initData();
     },
     async getNeedBillOrders() {
+      this.loading = true;
       this.tableData = []
       const data = {
         offset: this.offset,
@@ -242,7 +246,7 @@ export default {
       try {
         if (res.errcode === 0) {
           this.total = res.pager.Total;
-
+          this.loading = false;
           console.log("总数是：", this.total);
           // this.tableData = res.data
           res.data.forEach(item => {
@@ -262,6 +266,8 @@ export default {
       }
     },
     async initData() {
+      this.loading = true;
+
       this.tableData = []
       console.log("init之前：：", this.needStatus)
       const needStatusStr = this.needStatus.toString()
@@ -286,6 +292,8 @@ export default {
             this.tableData.push(item);
             // console.log("获取结果很顺利，其中")
           })
+          this.loading = false;
+
         } else {
           this.$message({
             type: 'error',

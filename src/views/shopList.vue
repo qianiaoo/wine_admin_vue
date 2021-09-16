@@ -2,6 +2,7 @@
   <div>
     <head-top></head-top>
     <el-table
+        v-loading="loading"
         :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%">
       <el-table-column
@@ -39,7 +40,7 @@
       </el-table-column>
       <el-table-column align="right" >
         <template #header >
-          <el-input v-model="search"></el-input>
+          <el-input size="small" placeholder="搜索店铺名称" v-model="search"></el-input>
         </template>
         <template slot-scope="scope">
           <el-button
@@ -86,6 +87,7 @@ export default {
   data() {
     return {
       total : 0,
+      loading: false,
       offset: 0,
       limit : 20,
       dialogFormVisible:false,
@@ -105,6 +107,7 @@ export default {
 
   methods: {
     async initData() {
+      this.loading = true;
       try {
         const shopData = await getShopList({offset: this.offset, limit: this.limit});
         console.log(shopData.data.data)
@@ -121,6 +124,7 @@ export default {
             td.freight = item.freight;
             td.max_range = item.postRange;
             this.tableData.push(td);
+            this.loading = false;
             console.log(td.mapData)
           })
         }else{
