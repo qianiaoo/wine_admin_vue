@@ -360,6 +360,10 @@ export default {
     getAddressString(region) {
       console.log(region)
       let res = '';
+      console.log("region:::::",region)
+      if (region === undefined) {
+        return
+      }
       for (var i=0; i<region.length; i++) {
         res=res + region[i];
       }

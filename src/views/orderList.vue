@@ -32,9 +32,9 @@ export default {
   methods: {
     needBillChanged() {
       if (this.needBill) {
-        this.$ref.orderTable.getNeedBillOrders();
+        this.$refs.orderTable.getNeedBillOrders();
       } else {
-        this.$ref.orderTable.initData();
+        this.$refs.orderTable.initData();
       }
     }
     // async initData() {

@@ -26,7 +26,7 @@ const routes = [
         children: [{
             path: '',
             component: Home,
-            meta: [],
+            meta: ["快速接单"],
         }
             , {
                 path: '/addGoods',
