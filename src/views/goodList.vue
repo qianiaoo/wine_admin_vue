@@ -94,7 +94,7 @@
           prop="isShowHP"
           label="首页推荐">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.isShowHP"></el-switch>
+          <el-switch @change='shopHPChanged(scope.row.isShowHP, scope.row._id)' v-model="scope.row.isShowHP"></el-switch>
         </template>
       </el-table-column>
       <el-table-column
@@ -157,7 +157,7 @@
 <script>
 import editGoodForm from "../components/editGoodForm";
 import headTop from "../components/headTop";
-import {getGoodList, getShopList, updateStock} from "../utils/api"
+import {changeHp, getGoodList, getShopList, updateStock} from "../utils/api"
 
 export default {
   data() {
@@ -229,6 +229,22 @@ export default {
     updateSuccess() {
       this.dialogFormVisible = false;
       this.initData();
+    },
+    async shopHPChanged(newVal, id) {
+      console.log("开关：：", newVal, id);
+      const res = await changeHp({_id: id, isShowHP: newVal})
+      if (res.status === 200) {
+        this.$message({
+          type: "success",
+          message: '设置首页推荐成功！'
+        });
+      } else {
+        this.$message({
+          type: "error",
+          message: '设置首页推荐失败！'
+        });
+      }
+
     },
     async initData() {
       this.loading = true;
