@@ -28,6 +28,9 @@
           <el-form-item label="最大配送范围">
             <el-input-number v-model="form.max_range"></el-input-number>
           </el-form-item>
+          <el-form-item label="起送费">
+            <el-input-number v-model="form.min_fee" :precision="0" :min="0"></el-input-number>
+          </el-form-item>
           <el-form-item label="配送费规则" prop="freight">
             <el-button type="primary" icon="el-icon-plus" circle @click="addFreight"></el-button>
             <el-button type="danger" icon="el-icon-delete" circle @click="deleteAllFreight"></el-button>

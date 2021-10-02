@@ -32,7 +32,7 @@
       <el-input v-model.number="formModel.marketPrice" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
     </el-form-item>
     <el-form-item label="销售量" prop="sale_count">
-      <el-input v-model.number="formModel.sale_count" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+      <el-input v-model.number="formModel.sale_count"   :disabled="true" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
     </el-form-item>
     <el-form-item label="原产地" prop="origin">
       <el-input v-model="formModel.origin"></el-input>
@@ -55,8 +55,8 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="描述" prop="description">
-      <el-input v-model="formModel.description" placeholder="请输入酒精度数和容量等描述"></el-input>
+    <el-form-item label="描述" prop="specification">
+      <el-input v-model="formModel.specification" placeholder="请输入酒精度数和容量等描述"></el-input>
     </el-form-item>
     <el-form-item label="库存" prop="stock">
       <el-input v-model="formModel.stock" placeholder="库存数量"></el-input>
@@ -147,7 +147,7 @@ export default {
         marketPrice: [{required: true, message: '请输入市场价', trigger: 'blur'}],
         origin: [{required: true, message: '请输入原产地', trigger: 'blur'}],
         item: [{required: true, message: '请输入商品名', trigger: 'blur'}],
-        description: [{required: true, message: '请输入度数及容量描述', trigger: 'blur'}],
+        specification: [{required: true, message: '请输入度数及容量描述', trigger: 'blur'}],
         stock: [{required: true, message: '请输入库存', trigger: 'blur'}],
         title: [{required: true, message: '请输入标题', trigger: 'blur'}],
         shop: [{required: true, message: '请选择店铺', trigger: 'blur'}],
@@ -167,7 +167,7 @@ export default {
         if (res.data.errcode === 0) {
           this.$message({
             type: 'success',
-            message: '更新店铺信息成功'
+            message: '修改商品信息成功！'
           });
           this.$emit("updateSuccess");
         } else {
@@ -223,11 +223,15 @@ export default {
       if (this.formModel.pic_array1) {
         const res = await shopPic({pic: this.getPicParam(this.formModel.pic_array1)})
         for (const item of res.data.file_list) {
+          console.log("initpic:::", item)
+          if (item.fileid === "null") {
+            continue
+          }
           const filename = item.fileid.split('/').pop()
 
           const picUrl = await shopPic({pic: item.fileid})
 
-          this.picList1.push({name: filename, url: picUrl.data.file_list[0].download_url})
+          this.picList1.push({name: filename, url: picUrl.data.file_list[0].download_url});
         }
       }
       if (this.formModel.pic_array2) {
@@ -275,13 +279,13 @@ export default {
     },
     onBeforeUpload(file) {
       const isIMAGE = file.type === 'image/jpeg' || 'image/gif' || 'image/png';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 10;
 
       if (!isIMAGE) {
         this.$message.error('上传文件只能是图片格式!');
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
       return isIMAGE && isLt2M;
     },

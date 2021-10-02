@@ -48,11 +48,11 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="描述" prop="description">
-            <el-input v-model="form.description" placeholder="请输入酒精度数和容量等描述"></el-input>
+          <el-form-item label="描述" prop="specification">
+            <el-input v-model="form.specification" placeholder="请输入酒精度数和容量等描述"></el-input>
           </el-form-item>
           <el-form-item label="库存" prop="stock">
-            <el-input v-model="form.stock" placeholder="库存数量"></el-input>
+            <el-input v-model="form.stock" placeholder="库存数量" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
           </el-form-item>
           <el-form-item label="标题" prop="title">
             <el-input v-model="form.title" placeholder="标题"></el-input>
@@ -123,12 +123,13 @@ export default {
 
     return {
       shopNames: [],
-
+      shopData: [],
       baseImgPath,
       picList1 : [],
       picList2 : [],
       thumbPic: '',
       shopIds: [],
+      shopCategory: [],
 
       baseUrl,
       form: {
@@ -147,7 +148,7 @@ export default {
         shop_name:'',
         stock: '',
         thumb_url: '',
-        description:'',
+        specification:'',
         title: '',
         degrees: '',
         capacity:'',
@@ -165,7 +166,7 @@ export default {
         marketPrice: [{required: true, message: '请输入市场价', trigger: 'blur'}],
         origin: [{required: true, message: '请输入原产地', trigger: 'blur'}],
         item: [{required: true, message: '请输入商品名', trigger: 'blur'}],
-        description: [{required: true, message: '请输入度数及容量描述', trigger: 'blur'}],
+        specification: [{required: true, message: '请输入度数及容量描述', trigger: 'blur'}],
         stock: [{required: true, message: '请输入库存', trigger: 'blur'}],
         title: [{required: true, message: '请输入标题', trigger: 'blur'}],
         shop: [{required: true, message: '请选择店铺', trigger: 'blur'}],
@@ -176,9 +177,6 @@ export default {
     }
   },
   computed: {
-    specification: function () {
-      return this.degrees + "°，" + this.capacity + "mL"
-    }
   },
   name: "addGoods",
   components: {
@@ -199,7 +197,7 @@ export default {
         if (res.data.errcode === 0) {
           this.$message({
             type: 'success',
-            message: '更新店铺信息成功'
+            message: '成功上架商品！'
           });
           this.$emit("updateSuccess");
         }else{
@@ -283,13 +281,13 @@ export default {
     },
     onBeforeUpload(file) {
       const isIMAGE = file.type === 'image/jpeg'||'image/gif'||'image/png';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 10;
 
       if (!isIMAGE) {
         this.$message.error('上传文件只能是图片格式!');
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
       return isIMAGE && isLt2M;
     },
@@ -298,18 +296,27 @@ export default {
       if (shopData.status === 200) {
         this.shopNames = [];
         this.shopIds = [];
+        this.shopCategory = [];
         shopData.data.data.forEach(item => {
           item = JSON.parse(item);
           this.shopNames.push(item.name);
           this.shopIds.push(item._id)
+          this.shopCategory.push(item.category)
         });
         console.log("shopData::200", this.shopNames)
+      }
+    },
+    findCategoryById(id) {
+      for (let i = 0; i < this.shopIds.length; i++) {
+        if (this.shopIds[i] === id) {
+          return this.shopCategory[i];
+        }
       }
     },
     selectShopChanged(val) {
       this.form.shop = val;
       console.log("selsectShop:", this.form.shop);
-
+      this.form.category = this.findCategoryById(val)
     },
   },
   created() {
@@ -358,7 +365,7 @@ export default {
     }
   }
 }
- 
+
 }
 </script>
 

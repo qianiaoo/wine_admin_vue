@@ -176,7 +176,7 @@ export default {
         if (res.data.errcode === 0) {
           this.$message({
             type: 'success',
-            message: '更新店铺信息成功'
+            message: '添加店铺成功！'
           });
           this.$emit("updateSuccess");
         }else{
