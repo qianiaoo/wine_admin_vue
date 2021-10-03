@@ -10,29 +10,29 @@
           <el-form-item label="分类名" prop="category_name">
             <el-select v-model="form.category_name" placeholder="请选择分类">
               <el-option v-for="item in form.category"
-              :key="item"
-              :label="item"
-              :value="item"></el-option>
+                         :key="item"
+                         :label="item"
+                         :value="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="售价" prop="price">
-            <el-input  v-model.number="form.price"   oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+            <el-input v-model.number="form.price" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
           </el-form-item>
           <el-form-item label="包装费" prop="packingsPrice">
-            <el-input  v-model.number="form.packingsPrice"  oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+            <el-input v-model.number="form.packingsPrice" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
           </el-form-item>
           <el-form-item label="市场价" prop="marketPrice">
-            <el-input  v-model.number="form.marketPrice"   oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+            <el-input v-model.number="form.marketPrice" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
           </el-form-item>
-<!--          <el-form-item label="销售量" prop="sale_count">-->
-<!--            <el-input  v-model.number="form.sale_count"   oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>-->
-<!--          </el-form-item>-->
+          <!--          <el-form-item label="销售量" prop="sale_count">-->
+          <!--            <el-input  v-model.number="form.sale_count"   oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>-->
+          <!--          </el-form-item>-->
           <el-form-item label="原产地" prop="origin">
             <el-input v-model="form.origin"></el-input>
           </el-form-item>
           <el-form-item label="首页推荐" prop="isShowHP">
             <el-switch
-                v-model="form.isShowHP" >
+                v-model="form.isShowHP">
             </el-switch>
           </el-form-item>
           <el-form-item label="商品名" prop="item">
@@ -67,7 +67,7 @@
 
                 :file-list="picList1"
                 list-type="picture"
-            :before-upload="onBeforeUpload"
+                :before-upload="onBeforeUpload"
                 multiple>
               <el-button size="small" type="primary">点击上传</el-button>
               <div slot="tip" class="el-upload__tip">请上传图片格式文件</div>
@@ -106,7 +106,7 @@
 
           <el-form-item>
             <el-button type="primary" @click="onSubmit">立即创建</el-button>
-<!--            <el-button>取消</el-button>-->
+            <!--            <el-button>取消</el-button>-->
           </el-form-item>
         </el-form>
 
@@ -118,6 +118,7 @@
 <script>
 import headTop from '../components/headTop'
 import {baseUrl, baseImgPath, addGoods, shopPic, getShopList} from "../utils/api";
+
 export default {
   data() {
 
@@ -125,16 +126,16 @@ export default {
       shopNames: [],
       shopData: [],
       baseImgPath,
-      picList1 : [],
-      picList2 : [],
+      picList1: [],
+      picList2: [],
       thumbPic: '',
       shopIds: [],
       shopCategory: [],
 
       baseUrl,
       form: {
-        isShowHP:false,
-        brand : "",
+        isShowHP: false,
+        brand: "",
         category_name: "",
         item: '',
         marketPrice: '',
@@ -145,24 +146,24 @@ export default {
         price: '',
         // sale_count: '',
         shop: '',
-        shop_name:'',
+        shop_name: '',
         stock: '',
         thumb_url: '',
-        specification:'',
+        specification: '',
         title: '',
         degrees: '',
-        capacity:'',
+        capacity: '',
 
       },
       rules: {
         brand: [
-          { required: true, message: '请输入品牌名', trigger: 'blur' },
+          {required: true, message: '请输入品牌名', trigger: 'blur'},
         ],
         category_name: [
-          { required: true, message: '请选择分类', trigger: 'blur' },
+          {required: true, message: '请选择分类', trigger: 'blur'},
         ],
-        price: [{required: true,  message: '请输入售价',trigger: 'blur'}],
-        packingsPrice: [{required: true,  message: '请输入批发价', trigger: 'blur'}],
+        price: [{required: true, message: '请输入售价', trigger: 'blur'}],
+        packingsPrice: [{required: true, message: '请输入批发价', trigger: 'blur'}],
         marketPrice: [{required: true, message: '请输入市场价', trigger: 'blur'}],
         origin: [{required: true, message: '请输入原产地', trigger: 'blur'}],
         item: [{required: true, message: '请输入商品名', trigger: 'blur'}],
@@ -176,8 +177,7 @@ export default {
 
     }
   },
-  computed: {
-  },
+  computed: {},
   name: "addGoods",
   components: {
     headTop
@@ -191,58 +191,63 @@ export default {
       }
     },
     async onSubmit() {
-      try {
-        const res = await addGoods(JSON.stringify(this.form));
-        console.log(res)
-        if (res.data.errcode === 0) {
-          this.$message({
-            type: 'success',
-            message: '成功上架商品！'
-          });
-          this.$emit("updateSuccess");
-        }else{
-          this.$message({
-            type: 'error',
-            message: res.message
-          });
+      if (this.form.brand && this.form.category_name && this.form.price && this.form.packingsPrice
+          && this.form.marketPrice && this.form.origin && this.form.item && this.form.specification
+          && this.form.stock && this.form.title && this.form.title && this.form.shop) {
+        try {
+          const res = await addGoods(JSON.stringify(this.form));
+          console.log(res)
+          if (res.data.errcode === 0) {
+            this.$message({
+              type: 'success',
+              message: '成功上架商品！'
+            });
+            this.$emit("updateSuccess");
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.message
+            });
+          }
+        } catch (e) {
+          console.log(e);
         }
-      }catch (e) {
-        console.log(e);
       }
+
     },
     handlePreview(file) {
       console.log(file)
     },
     handleRemove1(file) {
-      console.log("remove::",file)
-      for(var i=0;i<this.picList1.length;i++){
-        if(this.picList1[i].name===file.name){
-          this.picList1[i]=null
+      console.log("remove::", file)
+      for (var i = 0; i < this.picList1.length; i++) {
+        if (this.picList1[i].name === file.name) {
+          this.picList1[i] = null
           this.form.pic_array1[i] = null;
-          this.picList1=this.picList1.filter(n => n)
+          this.picList1 = this.picList1.filter(n => n)
           break
         }
       }
       console.log(this.picList1)
     },
     handleRemove2(file) {
-      console.log("remove::",file)
+      console.log("remove::", file)
 
       //deletePic({pic:file.response.name})
-      for(var i=0;i<this.picList2.length;i++){
-        if(this.picList2[i].name===file.name){
-          this.picList2[i]=null
+      for (var i = 0; i < this.picList2.length; i++) {
+        if (this.picList2[i].name === file.name) {
+          this.picList2[i] = null
           this.form.pic_array2 = null;
-          this.picList2=this.picList2.filter(n => n)
+          this.picList2 = this.picList2.filter(n => n)
           break
         }
       }
       console.log(this.picList2)
     },
-    handleRemove(file){
-     //deletePic({pic:file.response.name})
-     console.log(file)
-      this.form.thumb_url=""
+    handleRemove(file) {
+      //deletePic({pic:file.response.name})
+      console.log(file)
+      this.form.thumb_url = ""
     },
     async uploadImg(file) {
       console.log("上传成功后的file::", file);
@@ -252,7 +257,7 @@ export default {
         console.log("上传成功后，转换成功后的res", res);
         this.thumbPic = res.data.file_list[0].download_url;
         this.form.thumb_url = file['name'];
-        console.log("上传成功后，图片URL：",this.form.thumb_url);
+        console.log("上传成功后，图片URL：", this.form.thumb_url);
       }
 
     },
@@ -276,11 +281,11 @@ export default {
 
       console.log(this.form.pic_array2)
     },
-    beforeImgUpload(){
+    beforeImgUpload() {
 
     },
     onBeforeUpload(file) {
-      const isIMAGE = file.type === 'image/jpeg'||'image/gif'||'image/png';
+      const isIMAGE = file.type === 'image/jpeg' || 'image/gif' || 'image/png';
       const isLt2M = file.size / 1024 / 1024 < 10;
 
       if (!isIMAGE) {
@@ -316,22 +321,24 @@ export default {
     selectShopChanged(val) {
       this.form.shop = val;
       console.log("selsectShop:", this.form.shop);
+      console.log("changeeee:", this.form.category_name)
       this.form.category = this.findCategoryById(val)
+      this.form.category_name = '';
     },
   },
   created() {
     this.initShopData();
     if (this.$route.query.shop_id && this.$route.query.shop_name) {
       console.log(this.$route.query.shop)
-      this.form.shop=this.$route.query.shop_id;
-      this.form.shop_name=this.$route.query.shop_name
+      this.form.shop = this.$route.query.shop_id;
+      this.form.shop_name = this.$route.query.shop_name
       // console.log(this.$route.query.shop_name)
 
       this.$message({
-        message: '您正在为'+this.form.shop_name+"店铺添加商品。",
+        message: '您正在为' + this.form.shop_name + "店铺添加商品。",
         type: 'success'
       });
-    }else{
+    } else {
       console.log('here')
       // this.shop_id = Math.ceil(Math.random()*10);
       this.$msgbox({
@@ -356,60 +363,69 @@ export default {
     }
   },
   watch: {
-  $route: {
-    handler: function(val){
-      console.log(val)
-      this.$data.form.shop=val.query.shop_id
-      this.$data.form.shop_name=val.query.shop_name
-      this.$data.form.category=val.query.category
+    $route: {
+      handler: function (val) {
+        console.log(val)
+        this.$data.form.shop = val.query.shop_id
+        this.$data.form.shop_name = val.query.shop_name
+        this.$data.form.category = val.query.category
+      }
     }
   }
-}
 
 }
 </script>
 
 <style lang="less">
 @import '../style/mixin';
-.form{
+
+.form {
   min-width: 400px;
   margin-bottom: 30px;
-  &:hover{
-    box-shadow: 0 0 8px 0 rgba(232,237,250,.6), 0 2px 4px 0 rgba(232,237,250,.5);
+
+  &:hover {
+    box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6), 0 2px 4px 0 rgba(232, 237, 250, .5);
     border-radius: 6px;
     transition: all 400ms;
   }
 }
-.food_form{
+
+.food_form {
   border: 1px solid #eaeefb;
   padding: 10px 10px 0;
 }
-.form_header{
+
+.form_header {
   text-align: center;
   margin-bottom: 10px;
 }
-.category_select{
+
+.category_select {
   border: 1px solid #eaeefb;
   padding: 10px 30px 10px 10px;
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
 }
-.add_category_row{
+
+.add_category_row {
   height: 0;
   overflow: hidden;
   transition: all 400ms;
   background: #f9fafc;
 }
-.showEdit{
+
+.showEdit {
   height: 185px;
 }
-.add_category{
+
+.add_category {
   background: #f9fafc;
   padding: 10px 30px 0px 10px;
   border: 1px solid #eaeefb;
   border-top: none;
 }
-.add_category_button{
+
+.add_category_button {
   text-align: center;
   line-height: 40px;
   border-bottom-right-radius: 6px;
@@ -417,21 +433,26 @@ export default {
   border: 1px solid #eaeefb;
   border-top: none;
   transition: all 400ms;
-  &:hover{
+
+  &:hover {
     background: #f9fafc;
-    span, .edit_icon{
+
+    span, .edit_icon {
       color: #20a0ff;
     }
   }
-  span{
+
+  span {
     .sc(14px, #999);
     transition: all 400ms;
   }
-  .edit_icon{
+
+  .edit_icon {
     color: #ccc;
     transition: all 400ms;
   }
 }
+
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -439,9 +460,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #20a0ff;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -450,12 +473,14 @@ export default {
   line-height: 120px;
   text-align: center;
 }
+
 .avatar {
   width: 120px;
   height: 120px;
   display: block;
 }
-.cell{
+
+.cell {
   text-align: center;
 }
 </style>

@@ -287,8 +287,8 @@ export default {
                 td.stock = item.stock;
             td.thumb_url = item.thumb_url;
             td.title = item.title;
-            td.degrees = item.specification.split(',')[0];
-            td.capacity = item.specification.split(',')[1];
+            td.specification = item.specification;
+
             this.tableData.push(td);
           })
           this.loading = false;

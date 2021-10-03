@@ -168,6 +168,13 @@ export default {
         })
         return;
       }
+      if (this.form.mapData.length===0) {
+        this.$message({
+          type: "error",
+          message:"请打开地图选择定位"
+        })
+        return;
+      }
       try {
         this.form.freight=this.form.tableData
         // this.form.category='1,2,3,4'
