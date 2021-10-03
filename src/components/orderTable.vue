@@ -247,12 +247,15 @@ export default {
         if (res.errcode === 0) {
           this.total = res.pager.Total;
           this.loading = false;
-          console.log("总数是：", this.total);
+          console.log("总数是：", res.data);
           // this.tableData = res.data
           res.data.forEach(item => {
             // const td = {}
             item = JSON.parse(item);
-            this.tableData.push(item);
+            console.log(item.status)
+            if (item.status === 1) {
+              this.tableData.push(item);
+            }
             // console.log("获取结果很顺利，其中")
           })
         } else {
