@@ -18,7 +18,7 @@
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="left">
             <el-table :data="scope.row.freight">
-<!--              <span></span>-->
+              <!--              <span></span>-->
               <el-table-column label="公里数" prop="km"></el-table-column>
               <el-table-column label="配送费" prop="cny"></el-table-column>
             </el-table>
@@ -28,18 +28,18 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="地址" >
+      <el-table-column label="地址">
         <template v-slot="scope">
-        <el-popover trigger="hover" placement="left">
-          <p>{{"坐标："+scope.row.mapData[0]}}</p>
-          <div slot="reference" class="name-wrapper">
-            <el-tag size="medium">{{ scope.row.mapData[1] }}</el-tag>
-          </div>
-        </el-popover>
+          <el-popover trigger="hover" placement="left">
+            <p>{{ "坐标：" + scope.row.mapData[0] }}</p>
+            <div slot="reference" class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.mapData[1] }}</el-tag>
+            </div>
+          </el-popover>
         </template>
       </el-table-column>
-      <el-table-column align="right" >
-        <template #header >
+      <el-table-column align="right">
+        <template #header>
           <el-input size="small" placeholder="搜索店铺名称" v-model="search"></el-input>
         </template>
         <template slot-scope="scope">
@@ -70,8 +70,8 @@
           :total="total">
       </el-pagination>
     </div>
-    <el-dialog  title="修改商品信息" :visible.sync="dialogFormVisible">
-      <edit-shop-form @updateSuccess="updateSuccess" :form="selectedRow"> </edit-shop-form>
+    <el-dialog title="修改商品信息" :visible.sync="dialogFormVisible">
+      <edit-shop-form @updateSuccess="updateSuccess" :form="selectedRow"></edit-shop-form>
     </el-dialog>
   </div>
 </template>
@@ -86,13 +86,13 @@ export default {
   name: "shopList",
   data() {
     return {
-      total : 0,
+      total: 0,
       loading: false,
       offset: 0,
-      limit : 20,
-      dialogFormVisible:false,
-      search:'',
-      selectedRow:{},
+      limit: 20,
+      dialogFormVisible: false,
+      search: '',
+      selectedRow: {},
       currentPage: 1,
       tableData: []
     }
@@ -138,19 +138,19 @@ export default {
           this.tableData = []
           this.total = shopData.data.pager.Total;
           shopData.data.data.forEach(item => {
-            item=JSON.parse(item);
+            item = JSON.parse(item);
             const td = {};
             td.id = item._id;
             td.category = item.category
             td.name = item.name;
-            td.mapData = [item.location.coordinates,item.address];
+            td.mapData = [item.location.coordinates, item.address];
             td.freight = item.freight;
             td.max_range = item.postRange;
             this.tableData.push(td);
             this.loading = false;
             console.log(td.mapData)
           })
-        }else{
+        } else {
           throw new Error('获取数据失败');
         }
 
@@ -159,17 +159,18 @@ export default {
       }
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.limit = val;
+      this.initData();
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.offset = (val - 1)*this.limit;
+      this.offset = (val - 1) * this.limit;
       this.getInitialData();
     },
 
-    addGood(index, row){
-      console.log("即将进行路由跳转，参数为"+row.id)
-      this.$router.push({ path: '/addGoods', query: { shop_id: row.id, shop_name:row.name, category:row.category}})
+    addGood(index, row) {
+      console.log("即将进行路由跳转，参数为" + row.id)
+      this.$router.push({path: '/addGoods', query: {shop_id: row.id, shop_name: row.name, category: row.category}})
     },
     handleEdit(index, row) {
       this.selectedRow = row
