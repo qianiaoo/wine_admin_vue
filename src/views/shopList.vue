@@ -103,6 +103,29 @@ export default {
   },
   created() {
     this.initData();
+    console.log("created");
+  },
+  beforeMount() {
+    console.log("beforeMount");
+  },
+  updated() {
+    console.log("updated");
+  },
+
+  mounted() {
+    console.log("mounted!!");
+  },
+  beforeUpdate() {
+    console.log("beforeUpdate");
+  },
+  watch: {
+    '$route'(to, from) {
+      console.log("$route")
+      console.log(from);
+      if (to.path === '/shopList') {
+        this.initData();
+      }
+    }
   },
 
   methods: {

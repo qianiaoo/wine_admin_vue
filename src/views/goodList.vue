@@ -183,6 +183,17 @@ export default {
   created() {
     this.initData();
   },
+  watch: {
+    '$route'(to, from) {
+      console.log("$route")
+      console.log(from);
+      console.log(to);
+      if (to.path === '/goodList') {
+        console.log("totototot")
+        this.initData();
+      }
+    }
+  },
   methods: {
     handleEdit(row) {
       console.log(row)
@@ -230,6 +241,7 @@ export default {
       this.dialogFormVisible = false;
       this.initData();
     },
+
     async shopHPChanged(newVal, id) {
       console.log("开关：：", newVal, id);
       const res = await changeHp({_id: id, isShowHP: newVal})

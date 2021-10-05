@@ -161,11 +161,18 @@ export default {
 
     async onSubmit(){
       console.log({data:this.form.category})
+      if (!this.form.name) {
+        this.$message({
+          type: "error",
+          message: "请输入店名！"
+        });
+        return;
+      }
       if (this.form.category.length <= 0) {
         this.$message({
           type: "error",
           message:"请至少输入一个分类标签"
-        })
+        });
         return;
       }
       if (this.form.mapData.length===0) {
@@ -185,7 +192,7 @@ export default {
             type: 'success',
             message: '添加店铺成功！'
           });
-          this.$emit("updateSuccess");
+          await this.$router.push('/shopList')
         }else{
           this.$message({
             type: 'error',

@@ -202,7 +202,8 @@ export default {
               type: 'success',
               message: '成功上架商品！'
             });
-            this.$emit("updateSuccess");
+            await this.$router.push('/goodList')
+            // this.$emit("updateSuccess");
           } else {
             this.$message({
               type: 'error',
@@ -365,7 +366,7 @@ export default {
   watch: {
     $route: {
       handler: function (val) {
-        console.log(val)
+        // console.log(val)
         this.$data.form.shop = val.query.shop_id
         this.$data.form.shop_name = val.query.shop_name
         this.$data.form.category = val.query.category
