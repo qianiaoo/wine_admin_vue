@@ -403,7 +403,20 @@ export default {
   created() {
     this.initPreFilter();
     this.initData();
-  }
+  },
+  beforeMount() {
+    console.log("beforeMount");
+  },
+  updated() {
+    console.log("updated");
+  },
+
+  mounted() {
+    console.log("mounted!!");
+  },
+  beforeUpdate() {
+    console.log("beforeUpdate");
+  },
 }
 </script>
 
