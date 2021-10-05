@@ -29,6 +29,17 @@ export default {
   created() {
 
   },
+  watch: {
+    '$route'(to, from) {
+      console.log("$route")
+      console.log(from);
+      console.log(to);
+      if (to.path === '/orderList') {
+        console.log("totototot")
+        this.$refs.orderTable.initData();
+      }
+    }
+  },
   methods: {
     needBillChanged() {
       if (this.needBill) {
